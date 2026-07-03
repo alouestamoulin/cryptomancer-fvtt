@@ -45,27 +45,27 @@ export class CryptomancerActor extends Actor {
   }
 
   override prepareBaseData() {
-    if (this.data.type !== "character") {
+    if (this.type !== "character") {
       return;
     }
     // Data modifications in this step occur before processing embedded
     // documents or derived data.
     // Find equipped outfits that have DR rules
-    let equippedOutfits = this.data.items.filter(
+    let equippedOutfits = this.items.filter(
       (i) =>
-        i.data.type === "equipment" &&
-        i.data.data.type === EquipmentType.Outfit &&
-        i.data.data.equipped &&
-        Boolean(i.data.data.rules.damageReduction)
+        i.type === "equipment" &&
+        i.system.type === EquipmentType.Outfit &&
+        i.system.equipped &&
+        Boolean(i.system.rules.damageReduction)
     );
     if (equippedOutfits.length > 1) {
       console.warn(`Cryptomancer FVTT | ${this.name} has multiple outfits equipped, only using the highest DR.`);
       equippedOutfits = [
         equippedOutfits.reduce((highest, current) => {
           if (
-            current.data.type !== "equipment" ||
-            highest.data.type !== "equipment" ||
-            current.data.data.rules.damageReduction > highest.data.data.rules.damageReduction
+            current.type !== "equipment" ||
+            highest.type !== "equipment" ||
+            current.system.rules.damageReduction > highest.system.rules.damageReduction
           ) {
             return current;
           }
@@ -73,10 +73,10 @@ export class CryptomancerActor extends Actor {
         }),
       ];
     }
-    if (equippedOutfits.length > 0 && equippedOutfits[0].data.type === "equipment") {
-      this.data.update({ "data.damageReduction.value": equippedOutfits[0].data.data.rules.damageReduction.value || 0 });
+    if (equippedOutfits.length > 0 && equippedOutfits[0].type === "equipment") {
+      this.updateSource({ "system.damageReduction.value": equippedOutfits[0].system.rules.damageReduction.value || 0 });
     } else {
-      this.data.update({ "data.damageReduction.value": 0 });
+      this.updateSource({ "system.damageReduction.value": 0 });
     }
   }
 
@@ -89,44 +89,43 @@ export class CryptomancerActor extends Actor {
    * is queried and has a roll executed directly from it).
    */
   override prepareDerivedData(): void {
-    const actorData = this.data;
-
-    this.prepareCharacterData(actorData);
+    this.prepareCharacterData();
   }
 
   /**
    * Prepare Character type specific data
    */
-  private prepareCharacterData(actorData: ActorData) {
-    if (actorData.type !== "character") return;
-    actorData.data.talents = [];
-    actorData.data.spells = [];
-    actorData.data.consumables = [];
-    actorData.data.equipment = [];
-    actorData.data.outfits = [];
-    actorData.data.weapons = [];
+  private prepareCharacterData() {
+    if (this.type !== "character") return;
+    const system = this.system as any;
+    system.talents = [];
+    system.spells = [];
+    system.consumables = [];
+    system.equipment = [];
+    system.outfits = [];
+    system.weapons = [];
 
-    actorData.items.forEach((i: CryptomancerItem) => {
-      switch (i.data.type) {
+    this.items.forEach((i: CryptomancerItem) => {
+      switch (i.type) {
         case "talent":
-          actorData.data.talents.push(i);
+          system.talents.push(i);
           break;
         case "spell":
-          actorData.data.spells.push(i);
+          system.spells.push(i);
           break;
         case "equipment":
-          switch (i.data.data.type) {
+          switch (i.system.type) {
             case EquipmentType.Consumable:
-              actorData.data.consumables.push(i);
+              system.consumables.push(i);
               break;
             case EquipmentType.Equipment:
-              actorData.data.equipment.push(i);
+              system.equipment.push(i);
               break;
             case EquipmentType.Outfit:
-              actorData.data.outfits.push(i);
+              system.outfits.push(i);
               break;
             case EquipmentType.Weapon:
-              actorData.data.weapons.push(i);
+              system.weapons.push(i);
               break;
           }
           break;
@@ -158,11 +157,11 @@ export class CryptomancerActor extends Actor {
     skillName: SkillKey | "" = "",
     difficulty = CheckDifficulty.Challenging
   ) {
-    if (this.data.type !== "character") {
+    if (this.type !== "character") {
       return;
     }
-    const attribute = this.data.data.attributes[attributeName];
-    const skill = skillName ? this.data.data.skills[skillName] : null;
+    const attribute = this.system.attributes[attributeName];
+    const skill = skillName ? this.system.skills[skillName] : null;
     if (skill) {
       return SkillCheckService.skillCheck(
         attribute.value,
@@ -187,42 +186,42 @@ export class CryptomancerActor extends Actor {
   }
 
   async addCell(cell?: Cell): Promise<void> {
-    if (this.data.type !== "party") {
+    if (this.type !== "party") {
       return;
     }
 
     if (!cell) {
       cell = { ...DEFAULT_CELL };
     }
-    const newCells = [...this.data.data.cells, cell];
-    await this.update({ data: { cells: newCells } });
+    const newCells = [...this.system.cells, cell];
+    await this.update({ system: { cells: newCells } });
   }
 
   async removeCell(index: number): Promise<void> {
-    if (this.data.type !== "party") {
+    if (this.type !== "party") {
       return;
     }
 
-    const newCells = [...this.data.data.cells];
+    const newCells = [...this.system.cells];
     newCells.splice(index, 1);
-    await this.update({ data: { cells: newCells } });
+    await this.update({ system: { cells: newCells } });
   }
 
   async addRiskEvent(eventText: string = ""): Promise<void> {
-    if (this.data.type !== "party") {
+    if (this.type !== "party") {
       return;
     }
-    const newRiskEvents: RiskEvent[] = [...this.data.data.riskEvents, { complete: false, eventText }];
-    await this.update({ data: { riskEvents: newRiskEvents } });
+    const newRiskEvents: RiskEvent[] = [...this.system.riskEvents, { complete: false, eventText }];
+    await this.update({ system: { riskEvents: newRiskEvents } });
   }
 
   async removeRiskEvent(index: number): Promise<void> {
-    if (this.data.type !== "party") {
+    if (this.type !== "party") {
       return;
     }
-    const newRiskEvents = [...this.data.data.riskEvents];
+    const newRiskEvents = [...this.system.riskEvents];
     newRiskEvents.splice(index, 1);
-    await this.update({ data: { riskEvents: newRiskEvents } });
+    await this.update({ system: { riskEvents: newRiskEvents } });
   }
 
   private async addUnarmedStrike(): Promise<void> {
@@ -230,6 +229,6 @@ export class CryptomancerActor extends Actor {
     if (!storedUnarmedStrike) {
       return;
     }
-    await this.createEmbeddedDocuments("Item", [storedUnarmedStrike.data.toObject()]);
+    await this.createEmbeddedDocuments("Item", [storedUnarmedStrike.toObject()]);
   }
 }

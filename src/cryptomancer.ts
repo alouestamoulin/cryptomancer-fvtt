@@ -88,11 +88,11 @@ Hooks.once("ready", async function () {
   // So when updating this value, it should be set to the NEWEST version
   const NEEDS_MIGRATION_VERSION = "0.8.1";
   const COMPATIBLE_MIGRATION_VERSION = "0.1.0";
-  const needsMigration = !currentVersion || isNewerVersion(NEEDS_MIGRATION_VERSION, currentVersion);
+  const needsMigration = !currentVersion || foundry.utils.isNewerVersion(NEEDS_MIGRATION_VERSION, currentVersion);
   if (!needsMigration && !alwaysMigrate) return;
 
   // Perform the migration
-  if (currentVersion && isNewerVersion(COMPATIBLE_MIGRATION_VERSION, currentVersion)) {
+  if (currentVersion && foundry.utils.isNewerVersion(COMPATIBLE_MIGRATION_VERSION, currentVersion)) {
     ui.notifications?.error(_game.i18n.localize("MIGRATION.VersionTooOldWarning"), { permanent: true });
   }
   migrateWorld();
@@ -101,13 +101,17 @@ Hooks.once("ready", async function () {
 /**
  * Chat log render hook.
  */
-Hooks.on("renderChatLog", async (_: ChatLog, html: JQuery<HTMLElement>) => {
+Hooks.on("renderChatLog", async (_: unknown, htmlEl: JQuery<HTMLElement> | HTMLElement) => {
+  const html = $(htmlEl as HTMLElement);
   bindChatActions(html);
 
   // Render difficulty selector
-  const difficultySelectorContent = await renderTemplate("systems/cryptomancer/skill-check/difficulty-selector.hbs", {
-    checkDifficulty: settings.getSetting("checkDifficulty") ?? CheckDifficulty.Challenging,
-  });
+  const difficultySelectorContent = await foundry.applications.handlebars.renderTemplate(
+    "systems/cryptomancer/skill-check/difficulty-selector.hbs",
+    {
+      checkDifficulty: settings.getSetting("checkDifficulty") ?? CheckDifficulty.Challenging,
+    }
+  );
 
   // Append check selector
   html.find("#chat-controls").before(difficultySelectorContent);
@@ -146,7 +150,9 @@ Hooks.once("devModeReady", ({ registerPackageDebugFlag }: any) => {
 /**
  * Chat message render hook.
  */
-Hooks.on("renderChatMessage", (message: ChatMessage, html: JQuery<HTMLElement>) => {
+// v13+ replaced `renderChatMessage` (jQuery) with `renderChatMessageHTML` (HTMLElement).
+const onRenderChatMessage = (message: ChatMessage, htmlEl: JQuery<HTMLElement> | HTMLElement) => {
+  const html = $(htmlEl as HTMLElement);
   hideActionButtons(message, html);
 
   // Apply a css class to the message if it is configured in a flag
@@ -154,7 +160,8 @@ Hooks.on("renderChatMessage", (message: ChatMessage, html: JQuery<HTMLElement>) 
   if (cssClass) {
     html.addClass(cssClass);
   }
-});
+};
+Hooks.on("renderChatMessageHTML", onRenderChatMessage);
 
 /**
  * Don't allow the creation of trademark items.
@@ -181,8 +188,8 @@ Hooks.on("renderDialog", (_: Dialog, html: JQuery<HTMLElement>) => {
  */
 async function createItemMacro(data: DropData<Macro>, slot: number) {
   if ((data as any).type !== "Item") return;
-  if (!("data" in data)) return ui?.notifications?.warn("You can only create macro buttons for owned Items");
-  const item = data.data;
+  const item = await (Item as any).fromDropData(data);
+  if (!item) return ui?.notifications?.warn("You can only create macro buttons for owned Items");
 
   // Create the macro command
   const command = `game.cryptomancer.rollItemMacro("${item.name}");`;

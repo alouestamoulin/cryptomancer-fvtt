@@ -3,7 +3,7 @@
 }}
 <div class="crypt-safehouse-room {{room.type}}" data-type="{{room.type}}">
   <div class="room__header">
-    {{> toggleBox id=(concat room.type "-toggle") name=(concat "data.safehouse." room.type ".owned") value=room.owned tooltip=(l "Party.safehouseRoomOwned")}}
+    {{> toggleBox id=(concat room.type "-toggle") name=(concat "system.safehouse." room.type ".owned") value=room.owned tooltip=(l "Party.safehouseRoomOwned")}}
     <h3>
       <a class="safehouse-name">{{l (concat "SafehouseRoomType." room.type)}}</a>
     </h3>
@@ -18,7 +18,7 @@
   </div>
   <div class="room__input">
     <input type="text"
-           name="data.safehouse.{{room.type}}.value"
+           name="system.safehouse.{{room.type}}.value"
            value="{{room.value}}"/>
   </div>
   <div class="room__effect">
@@ -28,7 +28,7 @@
   </div>
   {{#if (is room.type "stable") }}
     <div class="room__mounts">
-      <textarea name="data.safehouse.stable.mounts" cols="30" rows="12">{{data.data.safehouse.stable.mounts}}</textarea>
+      <textarea name="system.safehouse.stable.mounts" cols="30" rows="12">{{system.safehouse.stable.mounts}}</textarea>
     </div>
   {{/if}}
 </div>

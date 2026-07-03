@@ -1,17 +1,17 @@
 <div class="crypt-defenses">
   <div class="defense">
-    {{> defense label=(l "Equipment.DR") value=data.data.damageReduction.value desc=(toLowerCase (l "Equipment.damageReduction")) readonly=true }}
+    {{> defense label=(l "Equipment.DR") value=system.damageReduction.value desc=(toLowerCase (l "Equipment.damageReduction")) readonly=true }}
   </div>
   <div class="defense">
-    {{> defense label=(l "Defense.dodge") value=data.data.core.speed.value desc=(l "Defense.vsMeleeMissile") readonly=true }}
+    {{> defense label=(l "Defense.dodge") value=system.core.speed.value desc=(l "Defense.vsMeleeMissile") readonly=true }}
   </div>
   <div class="defense">
-    {{> defense label=(l "Defense.parry") value=data.data.core.power.value desc=(l "Defense.vsMelee") readonly=true }}
+    {{> defense label=(l "Defense.parry") value=system.core.power.value desc=(l "Defense.vsMelee") readonly=true }}
   </div>
   <div class="defense">
-    {{> defense label=(l "Defense.takeCover") value=data.data.core.wits.value desc=(l "Defense.vsMissile") readonly=true }}
+    {{> defense label=(l "Defense.takeCover") value=system.core.wits.value desc=(l "Defense.vsMissile") readonly=true }}
   </div>
   <div class="defense">
-    {{> defense label=(l "Defense.resist") value=data.data.core.resolve.value desc=(l "Defense.vsMagic") readonly=true }}
+    {{> defense label=(l "Defense.resist") value=system.core.resolve.value desc=(l "Defense.vsMagic") readonly=true }}
   </div>
 </div>

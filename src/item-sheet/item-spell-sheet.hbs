@@ -16,8 +16,8 @@
     </div>
     <div class="crypt-form-field">
       <label for="spell-type-select-{{item.id}}">{{l "SpellType.spellType"}}</label>
-      <select id="spell-type-select-{{item.id}}" name="data.type">
-        {{selectOptions spellTypes selected=data.data.type localize=true}}
+      <select id="spell-type-select-{{item.id}}" name="system.type">
+        {{selectOptions spellTypes selected=system.type localize=true}}
       </select>
     </div>
   </section>
@@ -26,21 +26,21 @@
       <label for="spell-mp-cost-{{item.id}}">{{l "Spell.mpCost"}}</label>
       <input id="spell-mp-cost-{{item.id}}"
              type="text"
-             name="data.castCost"
-             value="{{data.data.castCost}}"
+             name="system.castCost"
+             value="{{system.castCost}}"
              data-dtype="Number"/>
     </div>
     <div class="crypt-form-field">
       <label for="spell-up-cost-{{item.id}}">{{l "Talent.upCost"}}</label>
       <input id="spell-up-cost-{{item.id}}"
              type="text"
-             name="data.purchaseCost"
-             value="{{data.data.purchaseCost}}"
+             name="system.purchaseCost"
+             value="{{system.purchaseCost}}"
              data-dtype="Number"/>
     </div>
   </section>
   <section class="sheet-body">
     <h3 class="description-label">{{l "Description"}}</h3>
-    {{editor content=data.data.description target="data.description" rollData=rollData button=true owner=owner editable=editable}}
+    {{editor content=system.description target="system.description" rollData=rollData button=true owner=owner editable=editable}}
   </section>
 </form>

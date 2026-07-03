@@ -9,7 +9,7 @@ import { PartySheetData } from "../actor-sheet.interface";
 
 export class PartySheet extends CryptomancerActorSheet<PartySheetData> {
   static override get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       template: "systems/cryptomancer/actor-sheet/party/party-sheet.hbs",
       width: 680,
       height: 840,
@@ -25,9 +25,10 @@ export class PartySheet extends CryptomancerActorSheet<PartySheetData> {
 
   override async getData(): Promise<PartySheetData> {
     const context = await super.getData();
-    if (context.data.type !== "party") {
+    if (this.actor.type !== "party") {
       return context;
     }
+    const system = (context.system = this.actor.system as any);
     context.cellTypes = CellTypes;
 
     /**
@@ -38,36 +39,36 @@ export class PartySheet extends CryptomancerActorSheet<PartySheetData> {
      * 50-100: Red
      */
     context.riskColor = "success";
-    if (context.data.data.risk.value >= 50) {
+    if (system.risk.value >= 50) {
       context.riskColor = "danger";
-    } else if (context.data.data.risk.value >= 31) {
+    } else if (system.risk.value >= 31) {
       context.riskColor = "secondary";
-    } else if (context.data.data.risk.value >= 11) {
+    } else if (system.risk.value >= 11) {
       context.riskColor = "primary";
     }
     return context;
   }
 
   override activateListeners(html: JQuery<HTMLElement>): void {
-    if (this.actor.data.type !== "party") return;
+    if (this.actor.type !== "party") return;
     super.activateListeners(html);
 
     // Handle risk event fields
     html.find<HTMLInputElement>("input.risk-event-field").on("change", (event) => {
-      if (this.document.data.type !== "party") {
+      if (this.document.type !== "party") {
         return;
       }
       const index = parseInt($(event.currentTarget).parents(".risk-event").data("index"));
-      const riskEvent: RiskEvent = { ...this.document.data.data.riskEvents[index] };
+      const riskEvent: RiskEvent = { ...this.document.system.riskEvents[index] };
       if (event.target.type === "checkbox") {
         riskEvent.complete = event.target.checked;
       } else {
         riskEvent.eventText = event.target.value;
       }
-      const newEvents = [...this.document.data.data.riskEvents];
+      const newEvents = [...this.document.system.riskEvents];
       newEvents.splice(index, 1, riskEvent);
       this.document.update({
-        data: {
+        system: {
           riskEvents: newEvents,
         },
       });
@@ -75,12 +76,12 @@ export class PartySheet extends CryptomancerActorSheet<PartySheetData> {
 
     // Handle cell fields
     html.find<HTMLInputElement>(".cell-field").on("change", (event) => {
-      if (this.document.data.type !== "party") {
+      if (this.document.type !== "party") {
         return;
       }
       const index = parseInt($(event.currentTarget).parents(".crypt-party-cell").data("index"));
       const field = event.currentTarget.dataset["field"];
-      const cell: Cell = { ...this.document.data.data.cells[index] };
+      const cell: Cell = { ...this.document.system.cells[index] };
       switch (field) {
         case "type":
           cell.type = event.target.value as CellType;
@@ -101,10 +102,10 @@ export class PartySheet extends CryptomancerActorSheet<PartySheetData> {
           cell.mission = event.target.value;
           break;
       }
-      const newCells = [...this.document.data.data.cells];
+      const newCells = [...this.document.system.cells];
       newCells.splice(index, 1, cell);
       this.document.update({
-        data: {
+        system: {
           cells: newCells,
         },
       });
@@ -135,7 +136,7 @@ export class PartySheet extends CryptomancerActorSheet<PartySheetData> {
 
     // Cell time increment selector
     html.find(".time-increment").on("click", (event) => {
-      if (this.document.data.type !== "party") {
+      if (this.document.type !== "party") {
         return;
       }
 
@@ -143,36 +144,36 @@ export class PartySheet extends CryptomancerActorSheet<PartySheetData> {
       const index = parseInt($(event.currentTarget).parents(".crypt-party-cell").data("index"));
       const increment = event.currentTarget.dataset.increment;
       if (index === undefined) return;
-      const cell: Cell = { ...this.document.data.data.cells[index] };
+      const cell: Cell = { ...this.document.system.cells[index] };
       cell.time.increment = increment as CellTimeIncrement;
-      const newCells = [...this.document.data.data.cells];
+      const newCells = [...this.document.system.cells];
       newCells.splice(index, 1, cell);
       this.actor.update({
-        data: { cells: newCells },
+        system: { cells: newCells },
       });
     });
 
     // Safehouse chat card
     html.find<HTMLAnchorElement>(".crypt-safehouse-room a.safehouse-name").on("click", (event) => {
-      if (this.document.data.type !== "party") {
+      if (this.document.type !== "party") {
         return;
       }
       const type = $(event.currentTarget).parents(".crypt-safehouse-room").data("type") as SafehouseRoomType;
       if (type) {
-        this.safehouseChatCard(this.document.data.data.safehouse[type]);
+        this.safehouseChatCard(this.document.system.safehouse[type]);
       }
     });
   }
 
   private onCellRoll(event: JQuery.ClickEvent) {
-    if (this.actor.data.type !== "party") return;
+    if (this.actor.type !== "party") return;
     event.preventDefault();
     const element = event.currentTarget;
     const dataset = element.dataset;
 
     const index = parseInt(dataset.index);
 
-    this.document.rollCellOperations(this.actor.data.data.cells[index]);
+    this.document.rollCellOperations(this.actor.system.cells[index]);
   }
 
   private async onRiskCheck(event: JQuery.ClickEvent) {
@@ -182,14 +183,14 @@ export class PartySheet extends CryptomancerActorSheet<PartySheetData> {
 
   private async safehouseChatCard(safehouse: SafehouseRoom) {
     const _game = getGame();
-    const content = await renderTemplate(
+    const content = await foundry.applications.handlebars.renderTemplate(
       "systems/cryptomancer/actor-sheet/party/components/safehouse-room-chat-card.hbs",
       safehouse
     );
     const messageData: ChatMessageDataConstructorData = {
       user: _game.user?.id,
       speaker: ChatMessage.getSpeaker({ actor: this.object }),
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      type: CONST.CHAT_MESSAGE_STYLES.OTHER,
       content,
     };
     ChatMessage.applyRollMode(messageData, _game.settings.get("core", "rollMode"));

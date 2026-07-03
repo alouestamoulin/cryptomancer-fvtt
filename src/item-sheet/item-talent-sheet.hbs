@@ -20,27 +20,27 @@
       <label for="talent-up-cost-{{item.id}}">{{l "Talent.upCost"}}</label>
       <input id="talent-up-cost-{{item.id}}"
              type="text"
-             name="data.purchaseCost"
-             value="{{data.data.purchaseCost}}"
+             name="system.purchaseCost"
+             value="{{system.purchaseCost}}"
              data-dtype="Number"/>
     </div>
     <div class="toggle-field">
       <span class="toggle-label">{{l "Talent.tiers"}}</span>
-      {{> toggleBox id=(concat "tiered-toggle-" item.id) value=data.data.tiered name="data.tiered"}}
+      {{> toggleBox id=(concat "tiered-toggle-" item.id) value=system.tiered name="system.tiered"}}
     </div>
-    {{#if data.data.tiered }}
+    {{#if system.tiered }}
       <div class="crypt-form-field">
         <label for="talent-tier-{{item.id}}">{{l "Talent.tier"}}</label>
         <input id="talent-tier-{{item.id}}"
                type="text"
-               name="data.currentTier"
-               value="{{data.data.currentTier}}"
+               name="system.currentTier"
+               value="{{system.currentTier}}"
                data-dtype="Number"/>
       </div>
     {{/if}}
   </section>
   <section class="sheet-body">
     <h3 class="description-label">{{l "Description"}}</h3>
-    {{editor content=data.data.description target="data.description" rollData=rollData button=true owner=owner editable=editable }}
+    {{editor content=system.description target="system.description" rollData=rollData button=true owner=owner editable=editable }}
   </section>
 </form>

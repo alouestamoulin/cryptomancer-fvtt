@@ -136,14 +136,14 @@ export function registerHandlebarsHelpers() {
    * Return a string showing whether an item is masterwork or trademark
    */
   Handlebars.registerHelper("itemAttrs", (item: CryptomancerItem) => {
-    if (item.data.type !== "equipment") {
+    if (item.type !== "equipment") {
       return;
     }
     const output: string[] = [];
-    if (item.data.data.masterwork) {
+    if (item.system.masterwork) {
       output.push(l("Equipment.masterworkShort"));
     }
-    if (item.data.data.trademark) {
+    if (item.system.trademark) {
       output.push(l("Equipment.trademarkShort"));
     }
     if (output.length > 0) {

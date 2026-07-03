@@ -4,19 +4,19 @@
       <label for="character-other-{{document.id}}">{{l "Equipment.other"}}</label>
       <input id="character-other-{{document.id}}"
              type="text"
-             name="data.gear.other"
-             value="{{data.data.gear.other}}"/>
+             name="system.gear.other"
+             value="{{system.gear.other}}"/>
     </div>
     <div class="crypt-form-field coin">
       <label for="character-coin-{{document.id}}">{{l "Equipment.coin"}}</label>
       <input id="character-coin-{{document.id}}"
              type="text"
              data-dtype="Number"
-             name="data.gear.coin"
-             value="{{data.data.gear.coin}}"/>
+             name="system.gear.coin"
+             value="{{system.gear.coin}}"/>
     </div>
   </section>
-  {{#if data.data.weapons.length }}
+  {{#if system.weapons.length }}
     <table class="crypt-item-table weapons-table">
       <tr>
         <th colspan="2">{{l "Equipment.weapons"}}</th>
@@ -24,7 +24,7 @@
         <th data-dtype="Number">{{l "Equipment.quantity"}}</th>
         <th data-dtype="Number">{{l "Equipment.cost"}}</th>
       </tr>
-      {{#each data.data.weapons }}
+      {{#each system.weapons }}
         <tr class="item-row" data-item-id="{{this.id}}">
           <td class="weapon avatar">
             <button class="avatar-wrapper" data-tooltip="{{l "ToChat"}}">
@@ -34,9 +34,9 @@
           <td class="weapon name">
             <a>{{this.name}}</a> <span class="item-attrs">{{itemAttrs this}}</span>
           </td>
-          <td class="weapon damage" data-dtype="Number">{{#if this.data.data.rules.damage}}{{this.data.data.rules.damage.value}}{{/if}}</td>
-          <td class="weapon quantity" data-dtype="Number">{{this.data.data.quantity}}</td>
-          <td class="weapon cost" data-dtype="Number">{{this.data.data.cost}}</td>
+          <td class="weapon damage" data-dtype="Number">{{#if this.system.rules.damage}}{{this.system.rules.damage.value}}{{/if}}</td>
+          <td class="weapon quantity" data-dtype="Number">{{this.system.quantity}}</td>
+          <td class="weapon cost" data-dtype="Number">{{this.system.cost}}</td>
           <td class="weapon actions-wrapper">
             <div class="actions">
               <button type="button" class="action-button" data-action="view" data-tooltip="{{l 'View'}}">
@@ -57,7 +57,7 @@
       {{/each}}
     </table>
   {{/if}}
-  {{#if data.data.outfits.length }}
+  {{#if system.outfits.length }}
     <table class="crypt-item-table outfits-table">
       <tr>
         <th colspan="2">{{l "Equipment.outfits"}}</th>
@@ -65,7 +65,7 @@
         <th data-dtype="Number">{{l "Equipment.quantity"}}</th>
         <th data-dtype="Number">{{l "Equipment.cost"}}</th>
       </tr>
-      {{#each data.data.outfits }}
+      {{#each system.outfits }}
         <tr class="item-row" data-item-id="{{this.id}}">
           <td class="outfit avatar">
             <button class="avatar-wrapper" data-tooltip="{{l "ToChat"}}">
@@ -75,15 +75,15 @@
           <td class="outfit name">
             <a>{{this.name}}</a> <span class="item-attrs">{{itemAttrs this}}</span>
           </td>
-          <td class="outfit dr" data-dtype="Number">{{#if this.data.data.rules.damageReduction}}{{this.data.data.rules.damageReduction.value}}{{/if}}</td>
-          <td class="outfit quantity" data-dtype="Number">{{this.data.data.quantity}}</td>
-          <td class="outfit cost" data-dtype="Number">{{this.data.data.cost}}</td>
+          <td class="outfit dr" data-dtype="Number">{{#if this.system.rules.damageReduction}}{{this.system.rules.damageReduction.value}}{{/if}}</td>
+          <td class="outfit quantity" data-dtype="Number">{{this.system.quantity}}</td>
+          <td class="outfit cost" data-dtype="Number">{{this.system.cost}}</td>
           <td class="outfit actions-wrapper">
             <div class="actions">
               <button type="button"
-                      class="action-button {{#if this.data.data.equipped}}active{{/if}}"
+                      class="action-button {{#if this.system.equipped}}active{{/if}}"
                       data-action="equip"
-                      data-tooltip="{{#if this.data.data.equipped}}{{l "Equipment.equipped"}}{{else}}{{l "Equipment.equip"}}{{/if}}">
+                      data-tooltip="{{#if this.system.equipped}}{{l "Equipment.equipped"}}{{else}}{{l "Equipment.equip"}}{{/if}}">
                 {{> armorIcon}}
               </button>
               <button type="button" class="action-button" data-action="view" data-tooltip="{{l 'View'}}">
@@ -104,14 +104,14 @@
       {{/each}}
     </table>
   {{/if}}
-  {{#if data.data.consumables.length }}
+  {{#if system.consumables.length }}
     <table class="crypt-item-table consumables-table">
       <tr>
         <th colspan="2">{{l "Equipment.consumables"}}</th>
         <th data-dtype="Number">{{l "Equipment.quantity"}}</th>
         <th data-dtype="Number">{{l "Equipment.cost"}}</th>
       </tr>
-      {{#each data.data.consumables }}
+      {{#each system.consumables }}
         <tr class="item-row" data-item-id="{{this.id}}">
           <td class="consumable avatar">
             <button class="avatar-wrapper" data-tooltip="{{l "ToChat"}}">
@@ -122,10 +122,10 @@
             <a>{{this.name}}</a> <span class="item-attrs">{{itemAttrs this}}</span>
           </td>
           <td class="consumable quantity" data-dtype="Number">
-            {{this.data.data.quantity}}
+            {{this.system.quantity}}
           </td>
           <td class="consumable cost" data-dtype="Number">
-            {{this.data.data.cost}}
+            {{this.system.cost}}
           </td>
           <td class="consumable actions-wrapper">
             <div class="actions">
@@ -147,7 +147,7 @@
       {{/each}}
     </table>
   {{/if}}
-  {{#if data.data.equipment.length }}
+  {{#if system.equipment.length }}
     <table class="crypt-item-table equipment-table">
       <tr>
         <th colspan="2">
@@ -160,7 +160,7 @@
           {{l "Equipment.cost"}}
         </th>
       </tr>
-      {{#each data.data.equipment }}
+      {{#each system.equipment }}
         <tr class="item-row" data-item-id="{{this.id}}">
           <td class="equipment avatar">
             <button class="avatar-wrapper" data-tooltip="{{l "ToChat"}}">
@@ -171,10 +171,10 @@
             <a>{{this.name}}</a> <span class="item-attrs">{{itemAttrs this}}</span>
           </td>
           <td class="equipment quantity" data-dtype="Number">
-            {{this.data.data.quantity}}
+            {{this.system.quantity}}
           </td>
           <td class="equipment cost" data-dtype="Number">
-            {{this.data.data.cost}}
+            {{this.system.cost}}
           </td>
           <td class="equipment actions-wrapper">
             <div class="actions">

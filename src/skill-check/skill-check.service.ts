@@ -32,16 +32,16 @@ export class SkillCheckService {
     actor?: CryptomancerActor
   ): Promise<void> {
     const r = new Roll(`{${Math.max(attributeDice, 0)}d10, ${Math.max(5 - attributeDice, 0)}d6}`, {});
-    await r.evaluate({ async: true });
+    await r.evaluate();
     await this.createChatMessage(r, attributeName, skillName, difficulty, skillBreak, skillPush, actor);
   }
 
   static async riskCheck(riskScore: number, party?: CryptomancerActor): Promise<void> {
-    const roll = await new Roll("1d100").evaluate({ async: true });
+    const roll = await new Roll("1d100").evaluate();
     const failure = roll.total <= riskScore;
 
     // Render template
-    const resultTemplate = await renderTemplate("systems/cryptomancer/skill-check/risk-check.hbs", {
+    const resultTemplate = await foundry.applications.handlebars.renderTemplate("systems/cryptomancer/skill-check/risk-check.hbs", {
       riskScore,
       failure,
       checkResult: roll.total,
@@ -53,7 +53,7 @@ export class SkillCheckService {
       user: getGame().user?.id,
       speaker: ChatMessage.getSpeaker({ actor: party }),
       roll,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
       sound: CONFIG.sounds.dice,
       whisper: null,
       flags: {
@@ -198,7 +198,7 @@ export class SkillCheckService {
       user: getGame().user?.id,
       speaker: ChatMessage.getSpeaker({ actor }),
       roll,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
       sound: CONFIG.sounds.dice,
       whisper: null,
     };
@@ -264,7 +264,7 @@ export class SkillCheckService {
     };
 
     // Render template
-    const resultTemplate = await renderTemplate("systems/cryptomancer/skill-check/skill-check.hbs", {
+    const resultTemplate = await foundry.applications.handlebars.renderTemplate("systems/cryptomancer/skill-check/skill-check.hbs", {
       rolls: result.parsedDice,
       ...labels,
       difficultyValue: difficulty,

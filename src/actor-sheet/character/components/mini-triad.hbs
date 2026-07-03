@@ -10,18 +10,18 @@ attributes: Record{AttributeKey, Attribute}
     <div class="core-label">{{l (concat "Core." this.key)}}</div>
     {{#noSkillAttribute this}}
     <div class="attr-break-push">
-      {{> toggleBox id=(concat "attr-" this.key "-break") name=(concat "data.attributes." this.key ".break") value=this.break placeholder="1"}}
-      {{> toggleBox id=(concat "attr-" this.key "-push") name=(concat "data.attributes." this.key ".push") value=this.push placeholder="10"}}
+      {{> toggleBox id=(concat "attr-" this.key "-break") name=(concat "system.attributes." this.key ".break") value=this.break placeholder="1"}}
+      {{> toggleBox id=(concat "attr-" this.key "-push") name=(concat "system.attributes." this.key ".push") value=this.push placeholder="10"}}
     </div>
   {{/noSkillAttribute}}
 </div>
 <div class="triad">
   <div class="core-value">
-    {{> coreInput value=this.value name=(concat "data.core." this.key ".value") size="large"}}
+    {{> coreInput value=this.value name=(concat "system.core." this.key ".value") size="large"}}
   </div>
   {{#each attributes }}
     <div class="core">
-      {{> coreInput value=this.value name=(concat "data.attributes." this.key ".value") size="small"}}
+      {{> coreInput value=this.value name=(concat "system.attributes." this.key ".value") size="small"}}
       <a class="rollable"
          data-roll-core="{{../key}}"
          data-roll-attribute="{{this.key}}">{{l (concat "Attr." this.key)}}</a>

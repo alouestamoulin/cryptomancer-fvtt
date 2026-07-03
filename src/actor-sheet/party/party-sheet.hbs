@@ -14,18 +14,18 @@
         </div>
         <div class="party-resource">
           <label for="party-risk-{{document.id}}">{{l "Party.risk"}}</label>
-          {{> coreInput id=(concat "party-risk-" document.id) value=data.data.risk.value name="data.risk.value" size="large" color=riskColor}}
+          {{> coreInput id=(concat "party-risk-" document.id) value=system.risk.value name="system.risk.value" size="large" color=riskColor}}
         </div>
         <div class="party-resource">
           <label for="party-upgrade-points-{{document.id}}">{{l "Party.upgradePoints"}}</label>
-          {{> coreInput id=(concat "party-upgrade-points-" document.id) value=data.data.upgradePoints name="data.upgradePoints" size="large"}}
+          {{> coreInput id=(concat "party-upgrade-points-" document.id) value=system.upgradePoints name="system.upgradePoints" size="large"}}
         </div>
         <div class="party-resource">
           <label for="party-assets-{{document.id}}">{{l "Party.assets"}}</label>
-          {{> coreInput id=(concat "party-assets-" document.id) value=data.data.assets name="data.assets" size="large"}}
+          {{> coreInput id=(concat "party-assets-" document.id) value=system.assets name="system.assets" size="large"}}
         </div>
         {{#if owner }}
-          <button type="button" class="risk-check" data-risk="{{data.data.risk.value}}">{{l "Party.riskCheck"}}</button>
+          <button type="button" class="risk-check" data-risk="{{system.risk.value}}">{{l "Party.riskCheck"}}</button>
           <button type="button" class="risk-event-add">{{l "Party.addRiskEvent"}}</button>
           <button type="button" class="cell-add">{{l "Cell.addCell"}}</button>
         {{/if}}
@@ -39,7 +39,7 @@
                  value="{{actor.name}}"/>
         </div>
         <h3>{{l "Party.riskEvents"}}</h3>
-        {{#each data.data.riskEvents }}
+        {{#each system.riskEvents }}
           <div class="risk-event" data-index="{{@index}}">
             <div class="crypt-toggle-box"
                  data-tooltip="{{l "Party.riskEventCompleted"}}">
@@ -58,29 +58,29 @@
           </div>
         {{/each}}
         <h3>{{l "Party.cells"}}</h3>
-        {{#if (is data.data.cells.length 0) }}
+        {{#if (is system.cells.length 0) }}
           <p>
             {{l "Party.noCells"}}
           </p>
         {{/if}}
-        {{#each data.data.cells }}
+        {{#each system.cells }}
           {{> cell cell=this index=@index documentId=../document.id cellTypes=../cellTypes owner=../owner }}
         {{/each}}
       </section>
     </div>
     <div class="tab safehouse" data-tab="safehouse">
       <div class="safehouse-rooms">
-        {{> safehouseRoom room=data.data.safehouse.cryptovault}}
-        {{> safehouseRoom room=data.data.safehouse.dungeon}}
-        {{> safehouseRoom room=data.data.safehouse.forge}}
-        {{> safehouseRoom room=data.data.safehouse.front}}
-        {{> safehouseRoom room=data.data.safehouse.golem}}
-        {{> safehouseRoom room=data.data.safehouse.laboratory}}
-        {{> safehouseRoom room=data.data.safehouse.lounge}}
-        {{> safehouseRoom room=data.data.safehouse.sanctuary}}
-        {{> safehouseRoom room=data.data.safehouse.stable}}
-        {{> safehouseRoom room=data.data.safehouse.trainingRoom}}
-        {{> safehouseRoom room=data.data.safehouse.warRoom}}
+        {{> safehouseRoom room=system.safehouse.cryptovault}}
+        {{> safehouseRoom room=system.safehouse.dungeon}}
+        {{> safehouseRoom room=system.safehouse.forge}}
+        {{> safehouseRoom room=system.safehouse.front}}
+        {{> safehouseRoom room=system.safehouse.golem}}
+        {{> safehouseRoom room=system.safehouse.laboratory}}
+        {{> safehouseRoom room=system.safehouse.lounge}}
+        {{> safehouseRoom room=system.safehouse.sanctuary}}
+        {{> safehouseRoom room=system.safehouse.stable}}
+        {{> safehouseRoom room=system.safehouse.trainingRoom}}
+        {{> safehouseRoom room=system.safehouse.warRoom}}
       </div>
     </div>
   </section>

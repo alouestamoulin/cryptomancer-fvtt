@@ -12,19 +12,19 @@ export function onManageActiveEffect(event: JQuery.ClickEvent, owner: Actor | It
     case "create":
       return owner.createEmbeddedDocuments("ActiveEffect", [
         {
-          label: "New Effect",
-          icon: "icons/svg/aura.svg",
+          name: "New Effect",
+          img: "icons/svg/aura.svg",
           origin: owner.uuid,
           "duration.rounds": li.dataset.effectType === "temporary" ? 1 : undefined,
           disabled: li.dataset.effectType === "inactive",
         },
       ]);
     case "edit":
-      return effect?.sheet.render(true);
+      return effect?.sheet?.render(true);
     case "delete":
       return effect?.delete();
     case "toggle":
-      return effect?.update({ disabled: !effect.data.disabled });
+      return effect?.update({ disabled: !effect.disabled });
   }
 }
 
@@ -56,7 +56,7 @@ export function prepareActiveEffectCategories(effects: ActiveEffect[]) {
   // Iterate over active effects, classifying them into categories
   for (let e of effects) {
     // Trigger a lookup for the source name e._getSourceName();
-    if (e.data.disabled) categories.inactive.effects.push(e);
+    if (e.disabled) categories.inactive.effects.push(e);
     else if (e.isTemporary) categories.temporary.effects.push(e);
     else categories.passive.effects.push(e);
   }

@@ -1,5 +1,3 @@
-import { getGame } from "./util";
-
 const partials: Record<string, string> = {
   attributeBar: "systems/cryptomancer/shared/components/attribute-bar.hbs",
   basicInfo: "systems/cryptomancer/actor-sheet/character/components/basic-info.hbs",
@@ -17,18 +15,24 @@ const partials: Record<string, string> = {
   toggle: "systems/cryptomancer/shared/components/toggle.hbs",
   toggleBox: "systems/cryptomancer/shared/components/toggle-box.hbs",
   skill: "systems/cryptomancer/actor-sheet/character/components/skill.hbs",
+  armorIcon: "systems/cryptomancer/icons/armor.hbs",
+  simpleArmorIcon: "systems/cryptomancer/icons/simpleArmor.hbs",
 };
 
-const icons: string[] = ["armor", "simpleArmor"];
-
 /**
- * Define a set of template paths to pre-load
- * Pre-loaded templates are compiled and cached for fast access when rendering
+ * Define a set of template paths to pre-load.
+ * Pre-loaded templates are compiled and cached for fast access when rendering.
+ * Passing an object to `loadTemplates` registers each entry as a named Handlebars
+ * partial (Foundry v11+). The bare paths are simply compiled and cached.
  * @return {Promise}
  */
 export const preloadHandlebarsTemplates = async function () {
-  await cryptLoadTemplates(partials);
-  await cryptLoadIcons(icons);
+  const { loadTemplates } = foundry.applications.handlebars;
+
+  // Register named partials (components + icons).
+  await loadTemplates(partials);
+
+  // Compile and cache the standalone templates.
   return loadTemplates([
     "systems/cryptomancer/skill-check/skill-check.hbs",
     "systems/cryptomancer/skill-check/risk-check.hbs",
@@ -36,40 +40,3 @@ export const preloadHandlebarsTemplates = async function () {
     "systems/cryptomancer/actor-sheet/party/components/safehouse-room-chat-card.hbs",
   ]);
 };
-
-/**
- * Get a template from the server by fetch request and caching the retrieved result
- * @param {string} path           The web-accessible HTML template URL
- * @returns {Promise<Function>}	  A Promise which resolves to the compiled Handlebars template
- */
-async function cryptGetTemplate(name: string, path: string) {
-  if (!_templateCache.hasOwnProperty(name)) {
-    await new Promise((resolve, reject) => {
-      getGame().socket!.emit("template", path, (resp: any) => {
-        if (resp.error) return reject(new Error(resp.error));
-        const compiled = Handlebars.compile(resp.html);
-        Handlebars.registerPartial(name, compiled);
-        _templateCache[name] = compiled;
-        console.log(`Cryptomancer VTT | Retrieved and compiled template ${name} at ${path}`);
-        resolve(compiled);
-      });
-    });
-  }
-  return _templateCache[path];
-}
-
-/* -------------------------------------------- */
-
-/**
- * Load and cache a set of templates by providing an Array of paths
- * @param {string[]} paths    An array of template file paths to load
- * @return {Promise<Function[]>}
- */
-async function cryptLoadTemplates(partialMap: Record<string, string>) {
-  const keys = Object.keys(partialMap);
-  return Promise.all(keys.map((k) => cryptGetTemplate(k, partialMap[k])));
-}
-
-async function cryptLoadIcons(iconMap: string[]) {
-  return Promise.all(iconMap.map((i) => cryptGetTemplate(`${i}Icon`, `systems/cryptomancer/icons/${i}.hbs`)));
-}

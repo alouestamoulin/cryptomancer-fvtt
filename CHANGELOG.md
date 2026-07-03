@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0] (2026-07-03)
+
+### Features
+
+- Compatibilité **Foundry VTT v13 / v14** (voir [`doc/MIGRATION_V14.md`](doc/MIGRATION_V14.md))
+- Traduction française des derniers éléments manquants (descriptions & noms d'armes, talents « Tireur d'élite » / « Spectre des brumes »)
+
+### Migration (breaking)
+
+- Manifeste au format v13 (`id`, `compatibility`, `grid`, packs `system`/`ownership`)
+- Migration de l'API `entity.data.data` → `entity.system` dans le code et les gabarits
+- Remplacement des globales dépréciées (`foundry.utils.*`, `foundry.applications.handlebars.*`, `CONST.CHAT_MESSAGE_STYLES`, hook `renderChatMessageHTML`)
+- Compendiums recompilés au format LevelDB (paquets NeDB `.db` non lus par Foundry v11+) via `tools/compile-packs.mjs`
+- ⚠️ Ne fonctionne plus sur Foundry v9–v12
+
 ### [0.8.1](https://github.com/OfficerHalf/cryptomancer-fvtt/compare/v0.8.0...v0.8.1) (2022-06-22)
 
 
