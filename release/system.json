@@ -1,0 +1,148 @@
+{
+  "id": "cryptomancer",
+  "title": "Cryptomancer",
+  "description": "The Cryptomancer system for FoundryVTT!",
+  "version": "1.1.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "14",
+    "maximum": "14"
+  },
+  "authors": [
+    {
+      "name": "OfficerHalf",
+      "url": "https://github.com/OfficerHalf"
+    }
+  ],
+  "esmodules": [
+    "cryptomancer.js"
+  ],
+  "styles": [
+    "cryptomancer.css"
+  ],
+  "scripts": [],
+  "packs": [
+    {
+      "name": "consumables",
+      "label": "Consumables",
+      "path": "packs/consumables",
+      "type": "Item",
+      "system": "cryptomancer",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "equipment",
+      "label": "Equipment",
+      "path": "packs/equipment",
+      "type": "Item",
+      "system": "cryptomancer",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "outfits",
+      "label": "Outfits",
+      "path": "packs/outfits",
+      "type": "Item",
+      "system": "cryptomancer",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "spells",
+      "label": "Spells",
+      "path": "packs/spells",
+      "type": "Item",
+      "system": "cryptomancer",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "talents",
+      "label": "Talents",
+      "path": "packs/talents",
+      "type": "Item",
+      "system": "cryptomancer",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "weapons",
+      "label": "Weapons",
+      "path": "packs/weapons",
+      "type": "Item",
+      "system": "cryptomancer",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "outfit-rules",
+      "label": "Outfit Rules",
+      "path": "packs/outfit-rules",
+      "type": "JournalEntry",
+      "system": "cryptomancer",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "status-effects",
+      "label": "Status Effects",
+      "path": "packs/status-effects",
+      "type": "JournalEntry",
+      "system": "cryptomancer",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "weapon-rules",
+      "label": "Weapon Rules",
+      "path": "packs/weapon-rules",
+      "type": "JournalEntry",
+      "system": "cryptomancer",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    }
+  ],
+  "packFolders": [],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
+    }
+  ],
+  "grid": {
+    "distance": 5,
+    "units": "ft"
+  },
+  "primaryTokenAttribute": "healthPoints",
+  "secondaryTokenAttribute": "manaPoints",
+  "url": "https://github.com/alouestamoulin/cryptomancer-fvtt",
+  "manifest": "https://github.com/alouestamoulin/cryptomancer-fvtt/releases/latest/download/system.json",
+  "download": "https://github.com/alouestamoulin/cryptomancer-fvtt/releases/latest/download/system.zip",
+  "license": "LICENSE.txt"
+}
