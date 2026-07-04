@@ -13,15 +13,14 @@ export function hideActionButtons(message: ChatMessage, html: JQuery<HTMLElement
   const actionButtons = html.find<HTMLButtonElement>("button[data-chat-action]");
   if (actionButtons.length > 0) {
     const _game = getGame();
-    const actorId = message.data.speaker.actor;
+    const actorId = message.speaker.actor;
     // If no actor attached, leave buttons
     if (!actorId) {
       return;
     }
     const actor = _game.actors!.get(actorId);
     // If the current user owns the actor, is GM, or created the message, leave buttons
-    // TODO: message.user -> message.author in Foundry v10
-    if ((actor && actor.isOwner) || _game.user!.isGM || (message.user && message.user.id === _game.user!.id)) {
+    if ((actor && actor.isOwner) || _game.user!.isGM || (message.author && message.author.id === _game.user!.id)) {
       return;
     }
 
@@ -58,16 +57,16 @@ async function handleChatAction(evt: JQuery.ClickEvent): Promise<void> {
 function handleSkillCheckAction(message: ChatMessage, skill: SkillKey) {
   const _game = getGame();
   const settings = new SettingsService();
-  const actorId = message.data.speaker.actor;
+  const actorId = message.speaker.actor;
   // If no actor attached, abort
   if (!actorId) {
     return;
   }
   const actor = _game.actors!.get(actorId);
-  if (!actor || actor.data.type !== "character") {
+  if (!actor || actor.type !== "character") {
     return;
   }
-  const attribute = actor.data.data.skills[skill].attribute;
+  const attribute = actor.system.skills[skill].attribute;
   const difficulty = (settings.getSetting("checkDifficulty") as CheckDifficulty) ?? CheckDifficulty.Challenging;
   actor.rollAttribute(attribute, skill, difficulty);
 }

@@ -11,23 +11,26 @@ export class CryptomancerItem extends Item {
     const templateData: Record<string, any> = {
       title: this.name,
       avatar: this.img,
-      description: this.data.data.description,
+      description: this.system.description,
     };
 
-    if (this.data.type === "equipment" && !isObjectEmpty(this.data.data.rules)) {
-      templateData["rules"] = this.data.data.rules;
+    if (this.type === "equipment" && !foundry.utils.isEmpty(this.system.rules)) {
+      templateData["rules"] = this.system.rules;
     }
 
-    if (this.data.type === "spell") {
-      templateData["castCost"] = this.data.data.castCost;
-      templateData["type"] = this.data.data.type;
+    if (this.type === "spell") {
+      templateData["castCost"] = this.system.castCost;
+      templateData["type"] = this.system.type;
     }
 
-    const content = await renderTemplate("systems/cryptomancer/item/chat-card.hbs", templateData);
+    const content = await foundry.applications.handlebars.renderTemplate(
+      "systems/cryptomancer/item/chat-card.hbs",
+      templateData
+    );
     const messageData: ChatMessageDataConstructorData = {
       user: _game.user?.id,
       speaker: ChatMessage.getSpeaker({ actor: _actor, token: _token }),
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      type: CONST.CHAT_MESSAGE_STYLES.OTHER,
       content,
     };
 

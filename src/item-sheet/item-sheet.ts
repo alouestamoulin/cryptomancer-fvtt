@@ -5,7 +5,7 @@ import { EquipmentRules, OutfitRules, SkillRules, WeaponRules } from "../item/it
 
 export class CryptomancerItemSheet extends ItemSheet<DocumentSheetOptions, AugmentedData> {
   static override get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["cryptomancer", "sheet", "item"],
       width: 580,
       height: 620,
@@ -21,6 +21,7 @@ export class CryptomancerItemSheet extends ItemSheet<DocumentSheetOptions, Augme
 
   override async getData(options?: Partial<DocumentSheetOptions>): Promise<AugmentedData> {
     const context = await super.getData(options);
+    (context as any).system = this.item.system;
     context.spellTypes = SpellTypes;
     context.equipmentTypes = EquipmentTypes;
     context.outfitRules = Object.values(OutfitRules).sort((a, b) => {
@@ -36,7 +37,7 @@ export class CryptomancerItemSheet extends ItemSheet<DocumentSheetOptions, Augme
   }
 
   override get template(): string {
-    return `systems/cryptomancer/item-sheet/item-${this.item.data.type}-sheet.hbs`;
+    return `systems/cryptomancer/item-sheet/item-${this.item.type}-sheet.hbs`;
   }
 
   override activateListeners(html: JQuery<HTMLElement>): void {
@@ -45,7 +46,7 @@ export class CryptomancerItemSheet extends ItemSheet<DocumentSheetOptions, Augme
   }
 
   private activateEquipmentListeners(html: JQuery<HTMLElement>): void {
-    if (this.object.data.type !== "equipment") {
+    if (this.object.type !== "equipment") {
       return;
     }
 
@@ -81,49 +82,49 @@ export class CryptomancerItemSheet extends ItemSheet<DocumentSheetOptions, Augme
 
     // Handle quality deletes
     html.find<HTMLButtonElement>(".crypt-chip.quality .chip-action-button").on("click", async (evt) => {
-      if (this.object.data.type !== "equipment") {
+      if (this.object.type !== "equipment") {
         return;
       }
       const chip = $(evt.currentTarget).parents(".crypt-chip");
       const index = chip.data("index");
-      const newValues = [...this.object.data.data.qualities];
+      const newValues = [...this.object.system.qualities];
       newValues.splice(index, 1);
       const updateData: any = {};
-      updateData["data.qualities"] = newValues;
+      updateData["system.qualities"] = newValues;
       await this.object.update(updateData);
     });
 
     html.find<HTMLDivElement>("section.status .status-chip").on("click", (evt) => {
-      if (this.object.data.type !== "equipment") {
+      if (this.object.type !== "equipment") {
         return;
       }
       const status = evt.currentTarget.dataset.status! as "masterwork" | "trademark" | "equipped";
       const updateData: any = {};
-      updateData[`data.${status}`] = !this.object.data.data[status];
+      updateData[`system.${status}`] = !(this.object.system as any)[status];
       this.object.update(updateData);
     });
 
     html.find<HTMLDivElement>("section.rules .rule-chip").on("click", (evt) => {
-      if (this.object.data.type !== "equipment") {
+      if (this.object.type !== "equipment") {
         return;
       }
       const ruleKey = evt.currentTarget.dataset.rule!;
       const updateData: any = {};
       // Delete rule
-      if (this.object.data.data.rules[ruleKey]) {
-        updateData[`data.rules.-=${ruleKey}`] = null;
+      if (this.object.system.rules[ruleKey]) {
+        updateData[`system.rules.-=${ruleKey}`] = null;
         this.object.update(updateData);
       }
       // Add rule
       else {
-        updateData[`data.rules.${ruleKey}`] = { ...EquipmentRules[ruleKey] };
+        updateData[`system.rules.${ruleKey}`] = { ...EquipmentRules[ruleKey] };
         this.object.update(updateData);
       }
     });
   }
 
   private async handleNewQuality(target: HTMLInputElement): Promise<void> {
-    if (this.object.data.type !== "equipment") {
+    if (this.object.type !== "equipment") {
       return;
     }
     const newValues = target.value
@@ -134,7 +135,7 @@ export class CryptomancerItemSheet extends ItemSheet<DocumentSheetOptions, Augme
       return;
     }
     const updateData: any = {};
-    updateData["data.qualities"] = [...this.object.data.data.qualities, ...newValues];
+    updateData["system.qualities"] = [...this.object.system.qualities, ...newValues];
     await this.object.update(updateData);
   }
 }

@@ -6,7 +6,7 @@ import { CharacterSheetData } from "../actor-sheet.interface";
 
 export class CharacterSheet extends CryptomancerActorSheet<CharacterSheetData> {
   static override get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       template: "systems/cryptomancer/actor-sheet/character/character-sheet.hbs",
       width: 680,
       height: 840,
@@ -22,7 +22,10 @@ export class CharacterSheet extends CryptomancerActorSheet<CharacterSheetData> {
 
   override async getData(): Promise<CharacterSheetData> {
     const context = await super.getData();
-    if (context.data.type !== "character") return context;
+    if (this.actor.type !== "character") return context;
+
+    // Expose the live system data (including derived arrays) to templates.
+    const system = (context.system = this.actor.system as any);
 
     // Get configured check difficulty
     context.checkDifficulty = this.settings.getSetting("checkDifficulty") ?? CheckDifficulty.Challenging;
@@ -30,30 +33,30 @@ export class CharacterSheet extends CryptomancerActorSheet<CharacterSheetData> {
     // Prep data for rendering
     context.hpAttributeBar = {
       color: "success",
-      max: context.data.data.healthPoints.max,
-      maxName: "data.healthPoints.max",
+      max: system.healthPoints.max,
+      maxName: "system.healthPoints.max",
       maxPlaceholder: "Max HP",
-      value: context.data.data.healthPoints.value,
-      valueName: "data.healthPoints.value",
+      value: system.healthPoints.value,
+      valueName: "system.healthPoints.value",
       valuePlaceholder: "HP",
       class: "hp",
       tooltip: "HP",
     };
     context.manaAttributeBar = {
       color: "primary",
-      max: context.data.data.manaPoints.max,
-      maxName: "data.manaPoints.max",
+      max: system.manaPoints.max,
+      maxName: "system.manaPoints.max",
       maxPlaceholder: "Max Mana",
-      value: context.data.data.manaPoints.value,
-      valueName: "data.manaPoints.value",
+      value: system.manaPoints.value,
+      valueName: "system.manaPoints.value",
       valuePlaceholder: "MP",
       class: "mp",
       tooltip: "MP",
     };
 
     // Prep core and attributes for rendering
-    const core = context.data.data.core;
-    const attributes = context.data.data.attributes;
+    const core = system.core;
+    const attributes = system.attributes;
     context.core = {
       power: {
         ...core.power,
@@ -87,11 +90,8 @@ export class CharacterSheet extends CryptomancerActorSheet<CharacterSheetData> {
 
     // Prep skills for rendering
     context.skills = [];
-    Object.values(context.data.data.skills).forEach((skill) => {
-      if (context.data.type !== "character") {
-        return;
-      }
-      const attribute = context.data.data.attributes[skill.attribute];
+    Object.values(system.skills).forEach((skill: any) => {
+      const attribute = system.attributes[skill.attribute];
       skill.label = l(skill.label);
       context.skills.push({ ...skill, attributeValue: attribute.value });
     });
@@ -100,11 +100,11 @@ export class CharacterSheet extends CryptomancerActorSheet<CharacterSheetData> {
     // Get all party sheets to select for this character
     context.partyOptions = getGame().actors!.filter((a) => a.type === "party");
     context.selectedParty = null;
-    const currentPartyId = context.data.data.biography.party;
+    const currentPartyId = system.biography.party;
     if (currentPartyId) {
       const selectedParty = context.partyOptions.find((p) => p.id === currentPartyId);
       if (selectedParty) {
-        context.selectedParty = selectedParty.data.data as Party;
+        context.selectedParty = selectedParty.system as Party;
       }
     }
 
@@ -112,7 +112,7 @@ export class CharacterSheet extends CryptomancerActorSheet<CharacterSheetData> {
   }
 
   override activateListeners(html: JQuery<HTMLElement>): void {
-    if (this.actor.data.type !== "character") return;
+    if (this.actor.type !== "character") return;
     super.activateListeners(html);
 
     // Rollable abilities.
@@ -146,9 +146,9 @@ export class CharacterSheet extends CryptomancerActorSheet<CharacterSheetData> {
           item.deleteDialog();
           break;
         case "equip":
-          if (item.data.type === "equipment") {
+          if (item.type === "equipment") {
             item.update({
-              "data.equipped": !item.data.data.equipped,
+              "system.equipped": !item.system.equipped,
             });
           }
           break;

@@ -1,9 +1,10 @@
 {
   "name": "cryptomancer",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "The Cryptomancer system for FoundryVTT!",
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c",
+    "build": "cross-env NODE_ENV=production rollup -c && npm run build:packs",
+    "build:packs": "node tools/compile-packs.mjs",
     "watch": "cross-env NODE_ENV=dev rollup -cw",
     "release:patch": "standard-version -r patch",
     "release:minor": "standard-version -r minor",
@@ -15,6 +16,7 @@
   "author": "OfficerHalf",
   "license": "MIT",
   "devDependencies": {
+    "@foundryvtt/foundryvtt-cli": "^1.0.3",
     "@guanghechen/rollup-plugin-copy": "^1.9.2",
     "@league-of-foundry-developers/foundry-vtt-types": "^9.249.4",
     "@rollup/plugin-node-resolve": "^13.2.1",

@@ -10,28 +10,28 @@
     <label for="true-name-field-{{document.id}}">{{l "Bio.trueName"}}</label>
     <input id="true-name-field-{{document.id}}"
            placeholder="{{l "Bio.trueNamePlaceholder"}}"
-           name="data.biography.trueName"
-           value="{{data.data.biography.trueName}}"/>
+           name="system.biography.trueName"
+           value="{{system.biography.trueName}}"/>
   </div>
   <div class="crypt-form-field">
     <label for="race-field-{{document.id}}">{{l "Bio.race"}}</label>
     <input id="race-field-{{document.id}}"
            placeholder="{{l "Bio.racePlaceholder"}}"
-           name="data.biography.race"
-           value="{{data.data.biography.race}}"/>
+           name="system.biography.race"
+           value="{{system.biography.race}}"/>
   </div>
   <div class="crypt-form-field">
     <label for="pronouns-field-{{document.id}}">{{l "Bio.pronouns"}}</label>
     <input id="pronouns-field-{{document.id}}"
            placeholder="{{l "Bio.pronounsPlaceholder"}}"
-           name="data.biography.pronouns"
-           value="{{data.data.biography.pronouns}}"/>
+           name="system.biography.pronouns"
+           value="{{system.biography.pronouns}}"/>
   </div>
   <div class="toggle-selector wounds crypt-form-field">
     <label>{{l "Wound.wounds"}}</label>
     <div class="toggles">
-      <span class="wound">{{> toggleBox id=(concat "wound-critical-" document.id) tooltip=(l "Wound.critical") value=data.data.healthPoints.criticalWound name="data.healthPoints.criticalWound" color="secondary"}}</span>
-      <span class="wound">{{> toggleBox id=(concat "wound-mortal-" document.id) tooltip=(l "Wound.mortal") value=data.data.healthPoints.mortalWound name="data.healthPoints.mortalWound" color="danger"}}</span>
+      <span class="wound">{{> toggleBox id=(concat "wound-critical-" document.id) tooltip=(l "Wound.critical") value=system.healthPoints.criticalWound name="system.healthPoints.criticalWound" color="secondary"}}</span>
+      <span class="wound">{{> toggleBox id=(concat "wound-mortal-" document.id) tooltip=(l "Wound.mortal") value=system.healthPoints.mortalWound name="system.healthPoints.mortalWound" color="danger"}}</span>
     </div>
   </div>
 </div>

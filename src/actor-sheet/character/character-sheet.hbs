@@ -41,15 +41,15 @@
       <section class="party-upgrade-points">
         <div class="crypt-form-field">
           <label for="party-select-{{document.id}}">{{ l "Party.party" }}</label>
-          <select id="party-select-{{document.id}}" name="data.biography.party">
-            {{ selectOptions partyOptions selected=data.data.biography.party blank="Select party..." nameAttr="id" labelAttr="name" }}
+          <select id="party-select-{{document.id}}" name="system.biography.party">
+            {{ selectOptions partyOptions selected=system.biography.party blank="Select party..." nameAttr="id" labelAttr="name" }}
           </select>
         </div>
         {{#if selectedParty }}
           <button type="button"
                   class="party-action-button view"
                   data-tooltip="{{ l "View" }}"
-                  data-party-id="{{ data.data.biography.party }}">
+                  data-party-id="{{ system.biography.party }}">
             <span class="fas fa-eye"></span>
           </button>
           <span>({{ selectedParty.upgradePoints }} {{ l "Party.upgradePoints" }})</span>
@@ -57,11 +57,11 @@
         <div class="flex-spacer"></div>
         <div class="upgrade-points">
           <label for="upgrade-points-input-{{document.id}}">{{ l "upgradePoints" }}</label>
-          {{> coreInput id=(concat "upgrade-points-input-" document.id) name="data.upgradePoints.value" value=data.data.upgradePoints.value size="small" }}
+          {{> coreInput id=(concat "upgrade-points-input-" document.id) name="system.upgradePoints.value" value=system.upgradePoints.value size="small" }}
         </div>
       </section>
       <section class="feature-list">
-        {{> features talents=data.data.talents spells=data.data.spells }}
+        {{> features talents=system.talents spells=system.spells }}
       </section>
     </div>
     <div class="tab equipment" data-group="primary" data-tab="equipment">{{> equipment }}</div>

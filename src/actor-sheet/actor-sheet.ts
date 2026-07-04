@@ -11,7 +11,7 @@ export abstract class CryptomancerActorSheet<T extends object> extends ActorShee
   protected readonly settings = new SettingsService();
 
   static override get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["cryptomancer", "sheet", "actor"],
     });
   }

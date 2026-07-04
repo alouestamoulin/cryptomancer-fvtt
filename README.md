@@ -39,6 +39,33 @@ Unzip `system.zip` from the latest release into your Foundry `Data/systems/crypt
 
 Note that while the system still has a version less than 1.0.0 there will be some inherent instability. Migrations will be performed, please raise an issue if there are problems going between versions.
 
+## Foundry VTT v13 / v14
+
+À partir de la version `0.9.0`, le système cible **Foundry VTT v13 et v14** (`compatibility.minimum: "13"`).
+Il n'est plus compatible avec Foundry v9–v12.
+
+Principaux changements de la migration :
+
+- Manifeste au format v13 (`id`, `compatibility`, `grid`, packs `system`/`ownership`).
+- Passage de l'API `entity.data.data` à `entity.system` dans tout le code et les gabarits.
+- Remplacement des globales dépréciées par leurs équivalents (`foundry.utils.*`,
+  `foundry.applications.handlebars.*`, `CONST.CHAT_MESSAGE_STYLES`, hook `renderChatMessageHTML`).
+- **Compendiums recompilés au format LevelDB** (les paquets NeDB `.db` ne sont plus lus par Foundry v11+).
+
+> ⚠️ La migration a été validée par le build (`npm run build`) mais **doit encore être testée en jeu**
+> dans une instance Foundry v14. Voir [`doc/MIGRATION_V14.md`](doc/MIGRATION_V14.md).
+
 ## Development
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### Build
+
+```bash
+npm install
+npm run build        # bundle JS/CSS (rollup) + compile les compendiums LevelDB
+npm run build:packs  # (re)compile uniquement les compendiums depuis src/packs/*.db
+```
+
+Les sources des compendiums restent au format NeDB (`src/packs/*.db`) et sont compilées
+en LevelDB (`dist/packs/<nom>/`) par `tools/compile-packs.mjs`.
