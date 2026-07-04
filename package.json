@@ -1,10 +1,11 @@
 {
   "name": "cryptomancer",
-  "version": "0.9.0",
+  "version": "1.1.0",
   "description": "The Cryptomancer system for FoundryVTT!",
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c && npm run build:packs",
     "build:packs": "node tools/compile-packs.mjs",
+    "package": "npm run build && node tools/package.mjs",
     "watch": "cross-env NODE_ENV=dev rollup -cw",
     "release:patch": "standard-version -r patch",
     "release:minor": "standard-version -r minor",
