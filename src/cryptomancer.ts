@@ -40,26 +40,26 @@ Hooks.once("init", async function () {
 
   // Register sheet application classes
   Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet(SCOPE, CharacterSheet, {
-    makeDefault: true,
-    label: "CRYPTOMANCER.SheetType.character",
-    types: ["character"],
-  });
-  Actors.registerSheet(SCOPE, PartySheet, {
-    makeDefault: true,
-    label: "CRYPTOMANCER.SheetType.party",
-    types: ["party"],
-  });
-  // Alternative "PDF" sheets (official French layout). Selectable from the
-  // actor's sheet configuration; not default so existing worlds are unchanged.
+  // "PDF" sheets (official French layout) are the DEFAULT. The original cyan
+  // sheets remain registered and selectable from the sheet configuration.
   Actors.registerSheet(SCOPE, CharacterSheetFr, {
-    makeDefault: false,
+    makeDefault: true,
     label: "CRYPTOMANCER.SheetType.characterFr",
     types: ["character"],
   });
   Actors.registerSheet(SCOPE, PartySheetFr, {
-    makeDefault: false,
+    makeDefault: true,
     label: "CRYPTOMANCER.SheetType.partyFr",
+    types: ["party"],
+  });
+  Actors.registerSheet(SCOPE, CharacterSheet, {
+    makeDefault: false,
+    label: "CRYPTOMANCER.SheetType.character",
+    types: ["character"],
+  });
+  Actors.registerSheet(SCOPE, PartySheet, {
+    makeDefault: false,
+    label: "CRYPTOMANCER.SheetType.party",
     types: ["party"],
   });
 
