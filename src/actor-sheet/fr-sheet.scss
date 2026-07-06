@@ -1,0 +1,452 @@
+/* ==========================================================================
+   Alternative "PDF" sheets — official French parchment layout.
+
+   The entire re-skin is achieved by re-mapping the crypt-ui palette variables
+   under `.cryptomancer-fr` (applied to the sheet application root). Every reused
+   component (core-input circles, toggle-boxes, attribute bars, item tables,
+   skills, cells, safehouse rooms, …) reads those variables, so it is themed to
+   parchment/red automatically without touching the default cyan sheets.
+   ========================================================================== */
+
+.cryptomancer-fr {
+  /* --- Parchment neutrals (backgrounds) ------------------------------------ */
+  --neutral: #f3ead4;
+  --neutral--light-1: #eee2c6;
+  --neutral--light-2: #e7d8b6;
+  --neutral--light-3: #dfcca3;
+  --neutral--light-4: #d5bd8d;
+  --neutral--light-5: #c8ac78;
+
+  /* --- Brick-red primary (text / accents / borders) ------------------------ */
+  --primary: #802019;
+  --primary--dark-1: #8f362d;
+  --primary--dark-2: #9c4b41; /* muted icons / secondary text */
+  --primary--dark-3: #7a1f18; /* idle circle borders / bar fills — strongest */
+  --primary--light-1: #a95d53; /* hover / active accents */
+  --primary--light-2: #c1837a;
+  --primary--light-3: #d8aaa2;
+
+  /* --- Colored variants: keep their backgrounds light so wound / HP / mana
+         boxes read as ink on paper rather than dark blocks -------------------- */
+  --neutral-secondary: #f0e3c6;
+  --neutral-secondary--light-1: #ead7b0;
+  --neutral-success: #e8e6c6;
+  --neutral-success--light-1: #dfddb4;
+  --neutral-danger: #f1ddce;
+  --neutral-danger--light-1: #ecd0bd;
+
+  /* --- Foundry base vars used by a few stray elements ---------------------- */
+  --color-text-dark-primary: #3b2a20;
+  --color-text-light-primary: #3b2a20;
+  --color-text-dark-inactive: #9a8461;
+}
+
+/* Subtle aged-paper background on the window content (higher specificity than
+   the base foundry.scss rule so the gradient is not overridden to `none`). */
+body.system-cryptomancer .window-app.cryptomancer-fr .window-content {
+  background-color: var(--neutral);
+  background-image:
+    radial-gradient(120% 85% at 50% 0%, rgba(255, 255, 255, 0.35), transparent 60%),
+    radial-gradient(90% 90% at 100% 100%, rgba(128, 32, 25, 0.06), transparent 55%);
+}
+
+/* ==========================================================================
+   Shared layout for both FR sheets
+   ========================================================================== */
+.crypt-character-sheet-fr,
+.crypt-party-sheet-fr {
+  // Cancel the default 8px form padding, like the default sheets do.
+  margin: -8px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-family: var(--font-primary);
+  color: var(--color-text-dark-primary);
+
+  .fr-page {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 14px;
+  }
+
+  .fr-section-title {
+    margin: 0 0 8px;
+    padding-bottom: 3px;
+    font-family: var(--font-accent);
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+  }
+
+  // Bio-style fields: left aligned like a paper form line.
+  .fr-field input {
+    text-align: left;
+    color: var(--primary);
+  }
+}
+
+/* ==========================================================================
+   Character sheet
+   ========================================================================== */
+.crypt-character-sheet-fr {
+  .fr-header {
+    display: grid;
+    grid-template-columns: 190px 1fr;
+    gap: 16px;
+    padding: 12px;
+    border: 2px solid var(--primary);
+
+    .fr-avatar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border: 2px solid var(--primary);
+      }
+    }
+
+    .fr-bio {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .fr-bio-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 18px;
+
+      .fr-section-title {
+        grid-column: 1 / -1;
+        margin-bottom: 2px;
+      }
+    }
+  }
+
+  .fr-columns {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  /* ---- Defense column -------------------------------------------------- */
+  .fr-defense {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    border: 2px solid var(--primary);
+
+    .fr-defense-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .fr-defense-name {
+        font-family: var(--font-accent);
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--primary);
+        line-height: 1.1;
+      }
+      .fr-defense-desc {
+        font-size: 0.72rem;
+        opacity: 0.7;
+      }
+    }
+
+    .fr-wound {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+
+      .crypt-toggle-box {
+        flex: 0 0 auto;
+        margin-top: 2px;
+      }
+      .fr-wound-title {
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+        color: var(--primary);
+        line-height: 1.15;
+      }
+      .fr-wound-desc {
+        font-size: 0.7rem;
+        opacity: 0.7;
+      }
+    }
+  }
+
+  /* ---- Triads ---------------------------------------------------------- */
+  /* Responsive: two-up (2x2, PDF-like) when wide, single column when narrow,
+     so the sheet never overflows horizontally regardless of resize. */
+  .fr-triads {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 14px;
+  }
+
+  .fr-triad {
+    padding: 12px;
+    border: 2px solid var(--primary);
+
+    .fr-triad-head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+
+      .fr-triad-title {
+        margin: 0;
+        font-family: var(--font-accent);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 1rem;
+        color: var(--primary);
+      }
+    }
+
+    .fr-triad-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+  }
+
+  .fr-attr-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .fr-attr-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+
+      .fr-attr-name {
+        font-family: var(--font-accent);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+        color: var(--primary);
+      }
+      .fr-break-push {
+        display: flex;
+        gap: 6px;
+        margin-left: auto;
+      }
+    }
+
+    .fr-skill-list {
+      display: flex;
+      flex-direction: column;
+
+      .fr-skill-head {
+        display: flex;
+        gap: 4px;
+        padding-left: 2px;
+        font-size: 0.68rem;
+        opacity: 0.6;
+        span {
+          width: 1.2rem;
+          text-align: center;
+        }
+      }
+
+      // Compact the reused skill row so two attribute columns fit side by side.
+      // The attribute abbreviation + value are already shown on the attribute
+      // circle (as on the paper sheet), so hide the per-skill repeats to give
+      // the skill name the full width and avoid mid-word wrapping.
+      .crypt-skill {
+        padding: 2px 3px;
+        gap: 4px;
+        grid-template-columns: auto auto 1fr;
+        font-size: 0.85rem;
+        overflow-wrap: anywhere;
+
+        .skill-name {
+          font-size: 0.85rem;
+          line-height: 1.1;
+        }
+        .short-attr,
+        .attr-value {
+          display: none;
+        }
+        &:nth-child(even) {
+          background-color: var(--neutral--light-2);
+        }
+      }
+    }
+
+    .fr-resource {
+      margin-top: 6px;
+
+      .fr-resource-label {
+        display: block;
+        margin-bottom: 2px;
+        font-family: var(--font-accent);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.75rem;
+        color: var(--primary);
+      }
+    }
+  }
+
+  /* ---- Talents & Gear -------------------------------------------------- */
+  .fr-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .fr-talents,
+  .fr-matos {
+    padding: 12px;
+    border: 2px solid var(--primary);
+    min-width: 0; // allow inner tables to shrink instead of overflowing
+  }
+}
+
+/* ==========================================================================
+   Party / safehouse sheet
+   ========================================================================== */
+.crypt-party-sheet-fr {
+  .fr-party-header {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 16px;
+    padding: 12px;
+    border: 2px solid var(--primary);
+
+    .fr-party-avatar img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+    }
+
+    .fr-party-id {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .party-name input {
+      font-family: var(--font-accent);
+      font-size: 1.3rem;
+    }
+
+    .fr-party-resources {
+      display: flex;
+      gap: 24px;
+    }
+    .fr-party-resource {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      label {
+        font-family: var(--font-accent);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.85rem;
+        color: var(--primary);
+      }
+    }
+
+    .fr-party-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      button {
+        width: auto;
+      }
+    }
+  }
+
+  .fr-risk-cells {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .fr-risk-events,
+  .fr-cells {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    border: 2px solid var(--primary);
+  }
+
+  .risk-event {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 8px;
+
+    input.risk-event-text {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--neutral--light-4);
+      color: var(--primary);
+    }
+
+    button.risk-event-delete {
+      padding: 0;
+      margin: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      color: var(--primary--dark-2);
+      &:hover,
+      &:focus {
+        box-shadow: none;
+        color: var(--primary);
+      }
+    }
+  }
+
+  .fr-cells .crypt-party-cell:not(:last-child) {
+    margin-bottom: 8px;
+  }
+
+  .fr-safehouse {
+    padding: 12px;
+    border: 2px solid var(--primary);
+
+    .safehouse-rooms {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-auto-flow: dense;
+      gap: 12px;
+
+      .stable {
+        grid-row: span 2;
+      }
+    }
+
+    // Keep long room names (e.g. "Cryptochambre-forte") from overlapping the
+    // cost circle. Only affects the FR sheet, not the default safehouse tab.
+    .crypt-safehouse-room .room__header h3 {
+      font-size: 1.25em;
+      overflow-wrap: anywhere;
+    }
+  }
+}

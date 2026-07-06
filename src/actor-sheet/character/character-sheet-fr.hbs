@@ -1,0 +1,84 @@
+<form class="crypt-character-sheet-fr" autocomplete="off">
+  <div class="fr-page">
+    {{!-- ============================ HEADER : BIO ============================ --}}
+    <header class="fr-header">
+      <div class="fr-avatar">
+        <img alt="{{actor.name}}" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+        <div class="crypt-form-field fr-field fr-race">
+          <label for="fr-race-{{document.id}}">{{l "Bio.race"}}</label>
+          <input id="fr-race-{{document.id}}"
+                 name="system.biography.race"
+                 value="{{system.biography.race}}"
+                 placeholder="{{l "Bio.racePlaceholder"}}" />
+        </div>
+      </div>
+      <div class="fr-bio">
+        <section class="fr-bio-block">
+          <h2 class="fr-section-title">{{toUpperCase (l "SheetFr.bio")}}</h2>
+          {{> frField id=(concat "fr-name-" document.id) label=(l "Bio.commonName") name="name" value=actor.name }}
+          {{> frField id=(concat "fr-pronouns-" document.id) label=(l "Bio.pronouns") name="system.biography.pronouns" value=system.biography.pronouns }}
+          {{> frField id=(concat "fr-truename-" document.id) label=(l "Bio.trueName") name="system.biography.trueName" value=system.biography.trueName }}
+        </section>
+        <section class="fr-bio-block">
+          <h2 class="fr-section-title">{{toUpperCase (l "SheetFr.appearance")}}</h2>
+          {{> frField id=(concat "fr-build-" document.id) label=(l "Bio.build") name="system.biography.build" value=system.biography.build }}
+          {{> frField id=(concat "fr-hair-" document.id) label=(l "Bio.hair") name="system.biography.hair" value=system.biography.hair }}
+          {{> frField id=(concat "fr-eyes-" document.id) label=(l "Bio.eyes") name="system.biography.eyes" value=system.biography.eyes }}
+          {{> frField id=(concat "fr-skin-" document.id) label=(l "Bio.skin") name="system.biography.skin" value=system.biography.skin }}
+        </section>
+        <section class="fr-bio-block">
+          <h2 class="fr-section-title">{{toUpperCase (l "SheetFr.personality")}}</h2>
+          {{> frField id=(concat "fr-desires-" document.id) label=(l "Bio.desires") name="system.biography.desires" value=system.biography.desires }}
+          {{> frField id=(concat "fr-fears-" document.id) label=(l "Bio.fears") name="system.biography.fears" value=system.biography.fears }}
+          {{> frField id=(concat "fr-tendsTo-" document.id) label=(l "Bio.tendsTo") name="system.biography.tendsTo" value=system.biography.tendsTo }}
+          {{> frField id=(concat "fr-usedTo-" document.id) label=(l "Bio.usedTo") name="system.biography.usedTo" value=system.biography.usedTo }}
+        </section>
+      </div>
+    </header>
+
+    {{!-- ==================== DEFENSE + TRIADS ==================== --}}
+    <div class="fr-columns">
+      <aside class="fr-defense">
+        <h2 class="fr-section-title">{{toUpperCase (l "SheetFr.defense")}}</h2>
+        {{> frDefenseRow label=(l "Defense.dodge") value=system.core.speed.value desc=(l "Defense.vsMeleeMissile") }}
+        {{> frDefenseRow label=(l "Defense.parry") value=system.core.power.value desc=(l "Defense.vsMelee") }}
+        {{> frDefenseRow label=(l "Defense.takeCover") value=system.core.wits.value desc=(l "Defense.vsMissile") }}
+        {{> frDefenseRow label=(l "Defense.resist") value=system.core.resolve.value desc=(l "Defense.vsMagic") }}
+        {{> frDefenseRow label=(l "Equipment.DR") value=system.damageReduction.value desc=(toLowerCase (l "Equipment.damageReduction")) }}
+
+        <div class="fr-wound">
+          {{> toggleBox id=(concat "fr-wound-crit-" document.id) color="secondary" value=system.healthPoints.criticalWound name="system.healthPoints.criticalWound" }}
+          <div class="fr-wound-text">
+            <div class="fr-wound-title">{{l "SheetFr.criticalWound"}}</div>
+            <div class="fr-wound-desc">{{l "SheetFr.criticalWoundDesc"}}</div>
+          </div>
+        </div>
+        <div class="fr-wound">
+          {{> toggleBox id=(concat "fr-wound-mortal-" document.id) color="danger" value=system.healthPoints.mortalWound name="system.healthPoints.mortalWound" }}
+          <div class="fr-wound-text">
+            <div class="fr-wound-title">{{l "SheetFr.mortalWound"}}</div>
+            <div class="fr-wound-desc">{{l "SheetFr.mortalWoundDesc"}}</div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="fr-triads">
+        {{#each frTriads}}
+          {{> frTriad this documentId=../document.id }}
+        {{/each}}
+      </section>
+    </div>
+
+    {{!-- ==================== TALENTS & SORTS / MATOS ==================== --}}
+    <div class="fr-bottom">
+      <section class="fr-talents">
+        <h2 class="fr-section-title">{{toUpperCase (l "SheetFr.talentsAndSpells")}}</h2>
+        {{> features talents=system.talents spells=system.spells }}
+      </section>
+      <section class="fr-matos">
+        <h2 class="fr-section-title">{{toUpperCase (l "SheetFr.matos")}}</h2>
+        {{> equipment }}
+      </section>
+    </div>
+  </div>
+</form>

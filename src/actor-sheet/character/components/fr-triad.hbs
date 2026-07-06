@@ -1,0 +1,28 @@
+{{!
+  One core triad (e.g. Vitesse) with its core circle and two attribute columns.
+
+  @Input this: {
+    coreKey: CoreKey;
+    coreValue: number;
+    left: AttrColData;
+    right: AttrColData;
+    resourceBar?: AttributeBarContext;
+    resourceLabel?: string;
+  };
+  @Input documentId: string;
+}}
+<div class="fr-triad {{coreKey}}">
+  <div class="fr-triad-head">
+    <h3 class="fr-triad-title">{{toUpperCase (l (concat "Core." coreKey))}}</h3>
+    <span class="fr-triad-core">
+      {{> coreInput value=coreValue name=(concat "system.core." coreKey ".value") size="large" }}
+    </span>
+  </div>
+  <div class="fr-triad-cols">
+    {{!-- resourceBar=false on the left column: partials inherit the invoking
+         context (the triad, which carries resourceBar), so it must be masked
+         explicitly or the HP/mana bar would render under both columns. --}}
+    {{> frAttrCol attr=left coreKey=coreKey documentId=documentId resourceBar=false resourceLabel=false }}
+    {{> frAttrCol attr=right coreKey=coreKey documentId=documentId resourceBar=resourceBar resourceLabel=resourceLabel }}
+  </div>
+</div>

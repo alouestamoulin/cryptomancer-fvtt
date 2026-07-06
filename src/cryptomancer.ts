@@ -2,6 +2,8 @@ import { DropData } from "@league-of-foundry-developers/foundry-vtt-types/src/fo
 import tippy from "tippy.js";
 
 import { CharacterSheet } from "./actor-sheet/character/character-sheet";
+import { CharacterSheetFr } from "./actor-sheet/character/character-sheet-fr";
+import { PartySheetFr } from "./actor-sheet/party/party-sheet-fr";
 import { CheckDifficulty } from "./skill-check/skill-check.enum";
 import { CryptomancerActor } from "./actor/actor";
 import { CryptomancerItem } from "./item/item";
@@ -46,6 +48,18 @@ Hooks.once("init", async function () {
   Actors.registerSheet(SCOPE, PartySheet, {
     makeDefault: true,
     label: "CRYPTOMANCER.SheetType.party",
+    types: ["party"],
+  });
+  // Alternative "PDF" sheets (official French layout). Selectable from the
+  // actor's sheet configuration; not default so existing worlds are unchanged.
+  Actors.registerSheet(SCOPE, CharacterSheetFr, {
+    makeDefault: false,
+    label: "CRYPTOMANCER.SheetType.characterFr",
+    types: ["character"],
+  });
+  Actors.registerSheet(SCOPE, PartySheetFr, {
+    makeDefault: false,
+    label: "CRYPTOMANCER.SheetType.partyFr",
     types: ["party"],
   });
 

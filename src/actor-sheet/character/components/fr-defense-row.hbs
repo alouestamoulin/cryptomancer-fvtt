@@ -1,0 +1,12 @@
+{{!
+  @Input label: string;
+  @Input value: string | number;
+  @Input desc: string;
+}}
+<div class="fr-defense-row">
+  {{> coreInput value=value readonly=true size="small" }}
+  <div class="fr-defense-text">
+    <div class="fr-defense-name">{{label}}</div>
+    <div class="fr-defense-desc">{{desc}}</div>
+  </div>
+</div>
