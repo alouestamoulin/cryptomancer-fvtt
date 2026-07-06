@@ -1,0 +1,88 @@
+<form class="crypt-party-sheet-fr" autocomplete="off">
+  <div class="fr-page">
+    {{!-- ============================ HEADER ============================ --}}
+    <header class="fr-party-header">
+      <div class="fr-party-avatar">
+        <img src="{{actor.img}}" title="{{actor.name}}" alt="{{actor.name}}" data-edit="img" />
+      </div>
+      <div class="fr-party-id">
+        <div class="crypt-form-field fr-field party-name">
+          <label for="fr-party-name-{{document.id}}">{{l "Party.partyName"}}</label>
+          <input id="fr-party-name-{{document.id}}" type="text" name="name" value="{{actor.name}}" />
+        </div>
+        <div class="fr-party-resources">
+          <div class="fr-party-resource">
+            <label for="fr-party-risk-{{document.id}}">{{l "Party.risk"}}</label>
+            {{> coreInput id=(concat "fr-party-risk-" document.id) value=system.risk.value name="system.risk.value" size="large" color=riskColor }}
+          </div>
+          <div class="fr-party-resource">
+            <label for="fr-party-pa-{{document.id}}">{{l "Party.upgradePoints"}}</label>
+            {{> coreInput id=(concat "fr-party-pa-" document.id) value=system.upgradePoints name="system.upgradePoints" size="large" }}
+          </div>
+          <div class="fr-party-resource">
+            <label for="fr-party-assets-{{document.id}}">{{l "Party.assets"}}</label>
+            {{> coreInput id=(concat "fr-party-assets-" document.id) value=system.assets name="system.assets" size="large" }}
+          </div>
+        </div>
+        {{#if owner}}
+          <div class="fr-party-actions">
+            <button type="button" class="risk-check" data-risk="{{system.risk.value}}">{{l "Party.riskCheck"}}</button>
+            <button type="button" class="risk-event-add">{{l "Party.addRiskEvent"}}</button>
+            <button type="button" class="cell-add">{{l "Cell.addCell"}}</button>
+          </div>
+        {{/if}}
+      </div>
+    </header>
+
+    {{!-- ==================== RISK EVENTS + CELLS ==================== --}}
+    <section class="fr-risk-cells">
+      <div class="fr-risk-events">
+        <h2 class="fr-section-title">{{toUpperCase (l "Party.riskEvents")}}</h2>
+        {{#each system.riskEvents}}
+          <div class="risk-event" data-index="{{@index}}">
+            <div class="crypt-toggle-box" data-tooltip="{{l "Party.riskEventCompleted"}}">
+              <input class="visually-hidden risk-event-field" id="fr-risk-event-toggle-{{@index}}-{{../document.id}}" type="checkbox" {{checked this.complete}} data-dtype="Boolean" />
+              <label for="fr-risk-event-toggle-{{@index}}-{{../document.id}}"></label>
+            </div>
+            <input type="text"
+                   id="fr-risk-event-text-{{@index}}-{{../document.id}}"
+                   class="risk-event-text risk-event-field"
+                   value="{{this.eventText}}" />
+            {{#if ../owner}}
+              <button type="button" class="risk-event-delete" data-tooltip="{{l 'Delete'}}">
+                <span class="fas fa-trash"></span>
+              </button>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+      <div class="fr-cells">
+        <h2 class="fr-section-title">{{toUpperCase (l "Party.cells")}}</h2>
+        {{#if (is system.cells.length 0)}}
+          <p class="fr-no-cells">{{l "Party.noCells"}}</p>
+        {{/if}}
+        {{#each system.cells}}
+          {{> cell cell=this index=@index documentId=../document.id cellTypes=../cellTypes owner=../owner }}
+        {{/each}}
+      </div>
+    </section>
+
+    {{!-- ==================== SAFEHOUSE UPGRADES ==================== --}}
+    <section class="fr-safehouse">
+      <h2 class="fr-section-title">{{toUpperCase (l "SheetFr.safehouseUpgrades")}}</h2>
+      <div class="safehouse-rooms">
+        {{> safehouseRoom room=system.safehouse.cryptovault }}
+        {{> safehouseRoom room=system.safehouse.dungeon }}
+        {{> safehouseRoom room=system.safehouse.forge }}
+        {{> safehouseRoom room=system.safehouse.front }}
+        {{> safehouseRoom room=system.safehouse.golem }}
+        {{> safehouseRoom room=system.safehouse.laboratory }}
+        {{> safehouseRoom room=system.safehouse.lounge }}
+        {{> safehouseRoom room=system.safehouse.sanctuary }}
+        {{> safehouseRoom room=system.safehouse.stable }}
+        {{> safehouseRoom room=system.safehouse.trainingRoom }}
+        {{> safehouseRoom room=system.safehouse.warRoom }}
+      </div>
+    </section>
+  </div>
+</form>

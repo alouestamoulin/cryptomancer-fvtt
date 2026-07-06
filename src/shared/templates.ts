@@ -17,6 +17,11 @@ const partials: Record<string, string> = {
   skill: "systems/cryptomancer/actor-sheet/character/components/skill.hbs",
   armorIcon: "systems/cryptomancer/icons/armor.hbs",
   simpleArmorIcon: "systems/cryptomancer/icons/simpleArmor.hbs",
+  // Alternative "PDF" (FR) sheet partials
+  frField: "systems/cryptomancer/actor-sheet/character/components/fr-field.hbs",
+  frDefenseRow: "systems/cryptomancer/actor-sheet/character/components/fr-defense-row.hbs",
+  frAttrCol: "systems/cryptomancer/actor-sheet/character/components/fr-attr-col.hbs",
+  frTriad: "systems/cryptomancer/actor-sheet/character/components/fr-triad.hbs",
 };
 
 /**

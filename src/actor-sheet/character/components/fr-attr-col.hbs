@@ -1,0 +1,41 @@
+{{!
+  One attribute column inside a triad: the attribute circle + rollable name,
+  and either the list of skills tied to it, or (for endurance/willpower) the
+  break/push toggles and the matching resource track.
+
+  @Input attr: { key, value, break?, push?, noSkill?, skills: Skill[] };
+  @Input coreKey: CoreKey;
+  @Input documentId: string;
+  @Input resourceBar?: AttributeBarContext;
+  @Input resourceLabel?: string;
+}}
+<div class="fr-attr-col {{#if attr.noSkill}}no-skill{{/if}}">
+  <div class="fr-attr-head">
+    <span class="fr-attr-circle">
+      {{> coreInput value=attr.value name=(concat "system.attributes." attr.key ".value") size="small" }}
+    </span>
+    <a class="fr-attr-name rollable"
+       data-roll-core="{{coreKey}}"
+       data-roll-attribute="{{attr.key}}">{{toUpperCase (l (concat "Attr." attr.key))}}</a>
+    {{#if attr.noSkill}}
+      <span class="fr-break-push">
+        {{> toggleBox id=(concat "fr-attr-" attr.key "-break-" documentId) name=(concat "system.attributes." attr.key ".break") value=attr.break placeholder="1"}}
+        {{> toggleBox id=(concat "fr-attr-" attr.key "-push-" documentId) name=(concat "system.attributes." attr.key ".push") value=attr.push placeholder="10"}}
+      </span>
+    {{/if}}
+  </div>
+  {{#unless attr.noSkill}}
+    <div class="fr-skill-list">
+      <div class="fr-skill-head"><span>1</span><span>10</span></div>
+      {{#each attr.skills}}
+        {{> skill this}}
+      {{/each}}
+    </div>
+  {{/unless}}
+  {{#if resourceBar}}
+    <div class="fr-resource">
+      <span class="fr-resource-label">{{resourceLabel}}</span>
+      {{> attributeBar resourceBar}}
+    </div>
+  {{/if}}
+</div>
