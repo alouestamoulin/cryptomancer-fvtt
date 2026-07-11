@@ -86,6 +86,15 @@ body.system-cryptomancer {
     border-width: 1px;
     border-color: var(--color-border-light-tertiary);
     margin: 10px;
+    // Foundry v13+ paints chat text with its own (light-theme) dark color,
+    // var(--color-dark-1), which is unreadable on our dark background
+    // ("noir sur bleu foncé"). Force a readable, on-theme color for all
+    // system chat content. Higher specificity than Foundry's `.chat-message`.
+    color: var(--primary);
+
+    .message-header {
+      color: var(--primary--dark-1);
+    }
   }
 
   *:not(.crypt-form-field) > select,

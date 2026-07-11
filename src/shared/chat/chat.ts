@@ -6,6 +6,10 @@ import { getGame } from "../util";
 import { ChatAction } from "./chat.enum";
 
 export function bindChatActions(html: JQuery<HTMLElement>): void {
+  // `renderChatLog` can fire more than once for the same (persistent) element in
+  // Foundry v13+, so remove any prior binding before re-adding to avoid stacking
+  // handlers (which would make the +/- difficulty buttons fire multiple times).
+  html.off("click", ".chat-message button[data-chat-action]", handleChatAction);
   html.on("click", ".chat-message button[data-chat-action]", handleChatAction);
 }
 
