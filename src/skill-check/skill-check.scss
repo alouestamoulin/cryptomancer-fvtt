@@ -1,4 +1,7 @@
 .crypt-skill-check {
+  // Explicit readable color for the roll card (also covers the case where the
+  // card is rendered outside a `.chat-message`, e.g. in a tooltip preview).
+  color: var(--primary);
   .skill {
     font-family: var(--font-accent);
     font-size: 1.1rem;

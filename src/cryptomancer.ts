@@ -1,5 +1,4 @@
 import { DropData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocumentMixin";
-import tippy from "tippy.js";
 
 import { CharacterSheet } from "./actor-sheet/character/character-sheet";
 import { CharacterSheetFr } from "./actor-sheet/character/character-sheet-fr";
@@ -113,48 +112,68 @@ Hooks.once("ready", async function () {
 });
 
 /**
- * Chat log render hook.
+ * Chat log render hook. Binds the delegated chat-card actions (e.g. the per-roll
+ * difficulty +/- buttons). The difficulty selector itself is injected via the
+ * `renderChatInput` hook below — see that handler for the v13+ rationale.
  */
-Hooks.on("renderChatLog", async (_: unknown, htmlEl: JQuery<HTMLElement> | HTMLElement) => {
-  const html = $(htmlEl as HTMLElement);
-  bindChatActions(html);
+Hooks.on("renderChatLog", (_: unknown, htmlEl: JQuery<HTMLElement> | HTMLElement) => {
+  bindChatActions($(htmlEl as HTMLElement));
+});
 
-  // Render difficulty selector
-  const difficultySelectorContent = await foundry.applications.handlebars.renderTemplate(
+/**
+ * Inject the "check difficulty" selector into the chat controls.
+ *
+ * In Foundry v13+ the chat controls (`#chat-controls`) are a single persistent
+ * element that Foundry relocates between the docked chat form and the floating
+ * notifications area *after* the `renderChatLog` hook fires (in
+ * `ChatLog#_onRender` → `_toggleNotifications`). Injecting on `renderChatLog`
+ * therefore orphaned the selector in a hidden container, so it never worked and
+ * every roll fell back to the default difficulty ("Ardue"). The `renderChatInput`
+ * hook fires from `_toggleNotifications` with the controls already in their final
+ * location, so we inject there instead, de-duplicating per chat instance.
+ */
+async function injectDifficultySelector(chatControls: HTMLElement, root?: HTMLElement | null): Promise<void> {
+  const scope = root ?? chatControls.parentElement;
+  if (!scope) return;
+
+  // Remove any previously-injected selector for this chat instance to avoid
+  // duplicates when the controls are relocated or the log is re-rendered.
+  scope.querySelectorAll(".crypt-difficulty-selector").forEach((el) => el.remove());
+
+  const content = await foundry.applications.handlebars.renderTemplate(
     "systems/cryptomancer/skill-check/difficulty-selector.hbs",
     {
       checkDifficulty: settings.getSetting("checkDifficulty") ?? CheckDifficulty.Challenging,
     }
   );
+  chatControls.insertAdjacentHTML("beforebegin", content);
 
-  // Append check selector
-  html.find("#chat-controls").before(difficultySelectorContent);
+  const selector = chatControls.previousElementSibling;
+  if (!(selector instanceof HTMLElement) || !selector.classList.contains("crypt-difficulty-selector")) {
+    return;
+  }
 
-  // Setup tooltips. Remove this in v10.
-  tippy("[data-tooltip]", {
-    content: (reference) => {
-      return (reference as HTMLElement).dataset.tooltip as string;
-    },
-  });
-
-  // Add event listeners
-  const toggles = html.find<HTMLInputElement>(".crypt-difficulty-selector .toggles input");
-  toggles.on("change", (event) => {
-    event.preventDefault();
-    const difficulty: "trivial" | "challenging" | "tough" = $(event.currentTarget)
-      .parents(".difficulty")
-      .data("difficulty");
-    toggles.each((_index, el) => {
-      if (el !== event.currentTarget) {
-        el.checked = false;
-      }
+  // Wire the toggle boxes as a single-choice (radio-like) group.
+  const toggles = Array.from(selector.querySelectorAll<HTMLInputElement>(".toggles input"));
+  toggles.forEach((input) => {
+    input.addEventListener("change", (event) => {
+      const target = event.currentTarget as HTMLInputElement;
+      const difficulty = target.closest<HTMLElement>(".difficulty")?.dataset.difficulty as
+        | "trivial"
+        | "challenging"
+        | "tough"
+        | undefined;
+      // Keep exactly one option selected.
+      toggles.forEach((el) => (el.checked = el === target));
+      if (difficulty) SkillCheckService.setCheckDifficulty(difficulty);
     });
-    SkillCheckService.setCheckDifficulty(difficulty);
   });
+}
 
-  // Scroll chatlog down
-  const chatLog = html.find("#chat-log");
-  chatLog.scrollTop(chatLog[0].scrollHeight || 0);
+// v13+: fired from `ChatLog#_toggleNotifications` with the controls in place.
+Hooks.on("renderChatInput", (app: { element?: HTMLElement }, elements: Record<string, HTMLElement>) => {
+  const chatControls = elements?.["#chat-controls"];
+  if (chatControls) void injectDifficultySelector(chatControls, app?.element ?? null);
 });
 
 Hooks.once("devModeReady", ({ registerPackageDebugFlag }: any) => {
