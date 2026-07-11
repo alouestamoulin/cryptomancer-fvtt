@@ -52,7 +52,9 @@ export class SkillCheckService {
       content: resultTemplate,
       user: getGame().user?.id,
       speaker: ChatMessage.getSpeaker({ actor: party }),
-      roll,
+      // v13+: ChatMessage stores rolls in a `rolls` array; the singular `roll`
+      // field is no longer read, so `message.rolls[0]` would otherwise be empty.
+      rolls: [roll],
       type: CONST.CHAT_MESSAGE_STYLES.ROLL,
       sound: CONFIG.sounds.dice,
       whisper: null,
@@ -197,7 +199,9 @@ export class SkillCheckService {
       ...data,
       user: getGame().user?.id,
       speaker: ChatMessage.getSpeaker({ actor }),
-      roll,
+      // v13+: store the roll in the `rolls` array so it can be re-read later
+      // (e.g. when the +/- buttons recompute the result at a new difficulty).
+      rolls: [roll],
       type: CONST.CHAT_MESSAGE_STYLES.ROLL,
       sound: CONFIG.sounds.dice,
       whisper: null,
@@ -220,7 +224,9 @@ export class SkillCheckService {
   static async updateChatMessage(message: ChatMessage, overrideConfig: Partial<SkillCheckConfigFlag>) {
     // Get config
     const config = message.getFlag("cryptomancer", "check-config") as SkillCheckConfigFlag;
-    if (!config || !message.roll) {
+    // v13+: the singular `ChatMessage#roll` getter was removed; use `rolls[0]`.
+    const roll = (message as unknown as { rolls?: Roll[] }).rolls?.[0];
+    if (!config || !roll) {
       return;
     }
 
@@ -228,7 +234,7 @@ export class SkillCheckService {
 
     // Get new data
     const messageData = await this.getChatMessageData(
-      message.roll,
+      roll,
       combinedConfig.attribute,
       combinedConfig.skill,
       combinedConfig.difficulty,
