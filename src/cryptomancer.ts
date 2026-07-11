@@ -121,25 +121,56 @@ Hooks.on("renderChatLog", (_: unknown, htmlEl: JQuery<HTMLElement> | HTMLElement
 });
 
 /**
- * Inject the "check difficulty" selector into the chat controls.
+ * The "check difficulty" selector (trivial/ardue/coriace = 4/6/8) lives in the
+ * chat controls and sets the default difficulty for new rolls.
  *
- * In Foundry v13+ the chat controls (`#chat-controls`) are a single persistent
- * element that Foundry relocates between the docked chat form and the floating
- * notifications area *after* the `renderChatLog` hook fires (in
- * `ChatLog#_onRender` → `_toggleNotifications`). Injecting on `renderChatLog`
- * therefore orphaned the selector in a hidden container, so it never worked and
- * every roll fell back to the default difficulty ("Ardue"). The `renderChatInput`
- * hook fires from `_toggleNotifications` with the controls already in their final
- * location, so we inject there instead, de-duplicating per chat instance.
+ * In Foundry v13+ the chat controls (`#chat-controls`) are relocated between the
+ * docked chat form and the floating notifications area *after* the
+ * `renderChatLog` hook fires (in `ChatLog#_onRender` → `_toggleNotifications`),
+ * and can be re-rendered on tab activate/deactivate. To be robust against all of
+ * that we:
+ *   - inject on the `renderChatInput` hook, which fires with the controls in
+ *     their final position, keeping a single, de-duplicated instance;
+ *   - handle clicks with ONE document-level, capture-phase delegated listener
+ *     bound once below, so it survives every re-injection and never stacks; and
+ *   - drive the checked state ourselves (suppressing the native `<label>`→`<input>`
+ *     toggle), which stays correct even if element ids get duplicated across chat
+ *     instances — the previous per-input `change` binding could toggle a stale,
+ *     hidden duplicate and so appeared "stuck".
  */
-async function injectDifficultySelector(chatControls: HTMLElement, root?: HTMLElement | null): Promise<void> {
-  const scope = root ?? chatControls.parentElement;
-  if (!scope) return;
+document.addEventListener(
+  "click",
+  (event) => {
+    const target = event.target as HTMLElement | null;
+    const difficultyEl = target?.closest?.(".crypt-difficulty-selector .difficulty") as HTMLElement | null;
+    if (!difficultyEl) return;
 
-  // Remove any previously-injected selector for this chat instance to avoid
-  // duplicates when the controls are relocated or the log is re-rendered.
-  scope.querySelectorAll(".crypt-difficulty-selector").forEach((el) => el.remove());
+    // Take over from the native label/checkbox toggle so a single click always
+    // updates the visible selector (never a stale duplicate elsewhere).
+    event.preventDefault();
+    const selector = difficultyEl.closest(".crypt-difficulty-selector");
+    const difficulty = difficultyEl.dataset.difficulty as "trivial" | "challenging" | "tough" | undefined;
+    if (!selector || !difficulty) return;
 
+    selector.querySelectorAll<HTMLElement>(".difficulty").forEach((span) => {
+      const input = span.querySelector<HTMLInputElement>("input");
+      if (input) input.checked = span === difficultyEl;
+    });
+    SkillCheckService.setCheckDifficulty(difficulty);
+  },
+  true
+);
+
+async function injectDifficultySelector(chatControls: HTMLElement): Promise<void> {
+  // Already correctly placed? Leave it (and its state) alone — `renderChatInput`
+  // can fire repeatedly (render, tab activate/deactivate) and recreating it each
+  // time would churn the DOM and reset the current selection.
+  const existing = chatControls.previousElementSibling;
+  if (existing instanceof HTMLElement && existing.classList.contains("crypt-difficulty-selector")) return;
+
+  // Otherwise remove every existing instance (guarantees a single selector, so no
+  // duplicate element ids) and create a fresh one reflecting the current setting.
+  document.querySelectorAll(".crypt-difficulty-selector").forEach((el) => el.remove());
   const content = await foundry.applications.handlebars.renderTemplate(
     "systems/cryptomancer/skill-check/difficulty-selector.hbs",
     {
@@ -147,33 +178,12 @@ async function injectDifficultySelector(chatControls: HTMLElement, root?: HTMLEl
     }
   );
   chatControls.insertAdjacentHTML("beforebegin", content);
-
-  const selector = chatControls.previousElementSibling;
-  if (!(selector instanceof HTMLElement) || !selector.classList.contains("crypt-difficulty-selector")) {
-    return;
-  }
-
-  // Wire the toggle boxes as a single-choice (radio-like) group.
-  const toggles = Array.from(selector.querySelectorAll<HTMLInputElement>(".toggles input"));
-  toggles.forEach((input) => {
-    input.addEventListener("change", (event) => {
-      const target = event.currentTarget as HTMLInputElement;
-      const difficulty = target.closest<HTMLElement>(".difficulty")?.dataset.difficulty as
-        | "trivial"
-        | "challenging"
-        | "tough"
-        | undefined;
-      // Keep exactly one option selected.
-      toggles.forEach((el) => (el.checked = el === target));
-      if (difficulty) SkillCheckService.setCheckDifficulty(difficulty);
-    });
-  });
 }
 
 // v13+: fired from `ChatLog#_toggleNotifications` with the controls in place.
-Hooks.on("renderChatInput", (app: { element?: HTMLElement }, elements: Record<string, HTMLElement>) => {
+Hooks.on("renderChatInput", (_app: unknown, elements: Record<string, HTMLElement>) => {
   const chatControls = elements?.["#chat-controls"];
-  if (chatControls) void injectDifficultySelector(chatControls, app?.element ?? null);
+  if (chatControls) void injectDifficultySelector(chatControls);
 });
 
 Hooks.once("devModeReady", ({ registerPackageDebugFlag }: any) => {
