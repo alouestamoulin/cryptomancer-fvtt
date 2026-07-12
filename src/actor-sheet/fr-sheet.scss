@@ -319,6 +319,49 @@ body.system-cryptomancer .window-app.cryptomancer-fr .window-content {
     border: 2px solid var(--primary);
     min-width: 0; // allow inner tables to shrink instead of overflowing
   }
+
+  /* ---- Emblematic weapon / outfit (matos free-text, PDF replica) ------- */
+  .fr-emblematic {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    .fr-emblematic-entry {
+      display: flex;
+      flex-direction: column;
+    }
+
+    // "Arme/Tenue emblématique" heading: label on its own line, name input below.
+    .fr-emblematic-title {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 2px;
+      padding-bottom: 0;
+      border-bottom: none;
+
+      label {
+        font-family: var(--font-accent);
+        letter-spacing: 1px;
+        color: var(--primary);
+        white-space: normal;
+      }
+      input {
+        padding-bottom: 2px;
+        border-bottom: 1px solid var(--neutral--light-4);
+      }
+    }
+
+    // Indent the mots-clés / traits sub-lines beneath their heading.
+    .fr-field:not(.fr-emblematic-title) {
+      margin-left: 14px;
+
+      label {
+        font-size: 0.78rem;
+        opacity: 0.75;
+      }
+    }
+  }
 }
 
 /* ==========================================================================

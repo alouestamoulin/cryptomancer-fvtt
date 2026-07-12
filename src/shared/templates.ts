@@ -22,6 +22,7 @@ const partials: Record<string, string> = {
   frDefenseRow: "systems/cryptomancer/actor-sheet/character/components/fr-defense-row.hbs",
   frAttrCol: "systems/cryptomancer/actor-sheet/character/components/fr-attr-col.hbs",
   frTriad: "systems/cryptomancer/actor-sheet/character/components/fr-triad.hbs",
+  frEmblematic: "systems/cryptomancer/actor-sheet/character/components/fr-emblematic.hbs",
 };
 
 /**
