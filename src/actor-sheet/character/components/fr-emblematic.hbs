@@ -1,0 +1,27 @@
+{{!-- Emblematic weapon & outfit — free-text blocks that mirror the paper sheet's
+      "Arme emblématique" / "Tenue emblématique" boxes (name + mots-clés + traits).
+      FR-only partial: stored under system.gear, rendered before the item tables. --}}
+<div class="fr-emblematic">
+  {{!-- Arme emblématique --}}
+  <div class="fr-emblematic-entry">
+    <div class="crypt-form-field fr-field fr-emblematic-title">
+      <label for="fr-emb-weapon-name-{{document.id}}">{{l "Equipment.emblematicWeapon"}}</label>
+      <input id="fr-emb-weapon-name-{{document.id}}"
+             name="system.gear.emblematicWeapon.name"
+             value="{{system.gear.emblematicWeapon.name}}" />
+    </div>
+    {{> frField id=(concat "fr-emb-weapon-keywords-" document.id) label=(l "Equipment.keywords") name="system.gear.emblematicWeapon.keywords" value=system.gear.emblematicWeapon.keywords }}
+    {{> frField id=(concat "fr-emb-weapon-traits-" document.id) label=(l "Equipment.traits") name="system.gear.emblematicWeapon.traits" value=system.gear.emblematicWeapon.traits }}
+  </div>
+  {{!-- Tenue emblématique --}}
+  <div class="fr-emblematic-entry">
+    <div class="crypt-form-field fr-field fr-emblematic-title">
+      <label for="fr-emb-outfit-name-{{document.id}}">{{l "Equipment.emblematicOutfit"}}</label>
+      <input id="fr-emb-outfit-name-{{document.id}}"
+             name="system.gear.emblematicOutfit.name"
+             value="{{system.gear.emblematicOutfit.name}}" />
+    </div>
+    {{> frField id=(concat "fr-emb-outfit-keywords-" document.id) label=(l "Equipment.keywords") name="system.gear.emblematicOutfit.keywords" value=system.gear.emblematicOutfit.keywords }}
+    {{> frField id=(concat "fr-emb-outfit-traits-" document.id) label=(l "Equipment.traits") name="system.gear.emblematicOutfit.traits" value=system.gear.emblematicOutfit.traits }}
+  </div>
+</div>

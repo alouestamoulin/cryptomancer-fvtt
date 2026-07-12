@@ -52,6 +52,8 @@ export interface Character extends ActorCommon {
   gear: {
     other: string;
     coin: number;
+    emblematicWeapon: EmblematicItem;
+    emblematicOutfit: EmblematicItem;
   };
   biography: {
     race: string;
@@ -73,6 +75,12 @@ export interface Character extends ActorCommon {
     key: string;
     value: number;
   };
+}
+
+export interface EmblematicItem {
+  name: string;
+  keywords: string;
+  traits: string;
 }
 
 export interface Party {

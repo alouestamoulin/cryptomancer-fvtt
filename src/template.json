@@ -306,7 +306,17 @@
       },
       "gear": {
         "coin": 0,
-        "other": ""
+        "other": "",
+        "emblematicWeapon": {
+          "name": "",
+          "keywords": "",
+          "traits": ""
+        },
+        "emblematicOutfit": {
+          "name": "",
+          "keywords": "",
+          "traits": ""
+        }
       },
       "biography": {
         "race": "",
